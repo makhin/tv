@@ -5,9 +5,9 @@
     "lib": ["ES2022"],
     "jsx": "react-native",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     
-    /* Строгие проверки типов */
+    /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ */
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -17,14 +17,14 @@
     "noImplicitThis": true,
     "alwaysStrict": true,
     
-    /* Дополнительные проверки */
+    /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     
-    /* Paths для абсолютных импортов */
+    /* Paths пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -34,10 +34,11 @@
       "@utils/*": ["src/utils/*"],
       "@store/*": ["src/store/*"],
       "@types/*": ["src/types/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@api/*": ["src/api/*"]
     },
     
-    /* Прочее */
+    /* пїЅпїЅпїЅпїЅпїЅпїЅ */
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

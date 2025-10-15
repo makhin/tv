@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Типы для стора
+// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 interface User {
   id: string;
   name: string;
@@ -39,14 +39,13 @@ export const useAppStore = create<AppState>()(
         ...initialState,
 
         setUser: (user) => set({ user }, false, 'setUser'),
-        
+
         setTheme: (theme) => set({ theme }, false, 'setTheme'),
-        
+
         setIsLoading: (isLoading) => set({ isLoading }, false, 'setIsLoading'),
-        
-        setFocusedItemId: (focusedItemId) =>
-          set({ focusedItemId }, false, 'setFocusedItemId'),
-        
+
+        setFocusedItemId: (focusedItemId) => set({ focusedItemId }, false, 'setFocusedItemId'),
+
         reset: () => set(initialState, false, 'reset'),
       }),
       {
@@ -69,7 +68,7 @@ export const useAppStore = create<AppState>()(
   )
 );
 
-// Селекторы для оптимизации перерендеров
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 export const selectUser = (state: AppState) => state.user;
 export const selectTheme = (state: AppState) => state.theme;
 export const selectIsLoading = (state: AppState) => state.isLoading;

@@ -1,12 +1,12 @@
 // src/components/FocusableGrid.tsx
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
-  View,
   FlatList,
   StyleSheet,
   Dimensions,
-  Platform,
   ListRenderItem,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import { FocusableCard } from './FocusableCard';
 
@@ -30,11 +30,8 @@ export const FocusableGrid: React.FC<FocusableGridProps> = ({
   numColumns = 4,
   onItemFocus,
 }) => {
-  const [focusedIndex, setFocusedIndex] = useState(0);
-
   const handleItemFocus = useCallback(
-    (index: number, itemId: string) => {
-      setFocusedIndex(index);
+    (itemId: string) => {
       onItemFocus?.(itemId);
     },
     [onItemFocus]
@@ -45,18 +42,20 @@ export const FocusableGrid: React.FC<FocusableGridProps> = ({
       const isFirstInRow = index % numColumns === 0;
       const hasTVPreferredFocus = index === 0;
 
+      const itemStyle: StyleProp<ViewStyle> = [
+        styles.gridItem,
+        { width: width / numColumns - 32 },
+        !isFirstInRow && styles.gridItemSpacing,
+      ];
+
       return (
         <FocusableCard
           title={item.title}
           imageUrl={item.imageUrl}
           onPress={item.onPress}
-          onFocus={() => handleItemFocus(index, item.id)}
+          onFocus={() => handleItemFocus(item.id)}
           hasTVPreferredFocus={hasTVPreferredFocus}
-          style={[
-            styles.gridItem,
-            { width: width / numColumns - 32 },
-            !isFirstInRow && styles.gridItemSpacing,
-          ]}
+          style={itemStyle}
         />
       );
     },

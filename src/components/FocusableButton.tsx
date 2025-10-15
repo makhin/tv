@@ -51,25 +51,13 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
   return (
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
       <Pressable
-        style={[
-          styles.button,
-          isFocused && styles.buttonFocused,
-          style,
-        ]}
+        style={[styles.button, isFocused && styles.buttonFocused, style]}
         onPress={onPress}
         onFocus={handleFocus}
         onBlur={handleBlur}
         hasTVPreferredFocus={hasTVPreferredFocus}
       >
-        <Text
-          style={[
-            styles.text,
-            isFocused && styles.textFocused,
-            textStyle,
-          ]}
-        >
-          {title}
-        </Text>
+        <Text style={[styles.text, isFocused && styles.textFocused, textStyle]}>{title}</Text>
       </Pressable>
     </Animated.View>
   );

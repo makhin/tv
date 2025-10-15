@@ -1,11 +1,6 @@
 // src/screens/HomeScreen.tsx
 import React, { useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { FocusableGrid } from '@/components/FocusableGrid';
@@ -19,12 +14,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const mockData = Array.from({ length: 20 }, (_, i) => ({
     id: `item-${i}`,
-    title: `Контент ${i + 1}`,
+    title: `пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ${i + 1}`,
     imageUrl: `https://picsum.photos/400/225?random=${i}`,
     onPress: () => {
       navigation.navigate('Detail', {
         itemId: `item-${i}`,
-        title: `Контент ${i + 1}`,
+        title: `пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ${i + 1}`,
       });
     },
   }));
@@ -39,19 +34,15 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Мое Android TV Приложение</Text>
+        <Text style={styles.title}>пїЅпїЅпїЅ Android TV пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</Text>
         <FocusableButton
-          title="Настройки"
+          title="пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
           onPress={() => navigation.navigate('Settings')}
           style={styles.settingsButton}
         />
       </View>
-      
-      <FocusableGrid
-        data={mockData}
-        numColumns={4}
-        onItemFocus={handleItemFocus}
-      />
+
+      <FocusableGrid data={mockData} numColumns={4} onItemFocus={handleItemFocus} />
     </View>
   );
 };

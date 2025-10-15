@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform } from 'react-native';
 
-// Импорт экранов
+// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 import HomeScreen from '@/screens/HomeScreen';
 import DetailScreen from '@/screens/DetailScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
@@ -25,27 +25,19 @@ export const RootNavigator: React.FC = () => {
         screenOptions={{
           headerShown: true,
           animation: Platform.isTV ? 'fade' : 'default',
-          // TV-специфичные настройки
+          // TV-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
           headerTitleStyle: {
             fontSize: Platform.isTV ? 32 : 20,
           },
         }}
       >
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen}
-          options={{ title: 'Главная' }}
-        />
-        <Stack.Screen 
-          name="Detail" 
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ' }} />
+        <Stack.Screen
+          name="Detail"
           component={DetailScreen}
           options={({ route }) => ({ title: route.params.title })}
         />
-        <Stack.Screen 
-          name="Settings" 
-          component={SettingsScreen}
-          options={{ title: 'Настройки' }}
-        />
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

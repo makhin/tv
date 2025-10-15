@@ -55,7 +55,5 @@ declare module 'react-native-tvos' {
     eventKeyAction?: number;
   }
 
-  export function useTVEventHandler(
-    handler: (event: TVEventInfo) => void
-  ): void;
+  export function useTVEventHandler(handler: (event: TVEventInfo) => void): void;
 }

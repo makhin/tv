@@ -1,14 +1,8 @@
 // src/components/FocusableCard.tsx
 import React, { useState, useRef } from 'react';
-import {
-  Pressable,
-  Text,
-  Image,
-  StyleSheet,
-  ViewStyle,
-  Platform,
-  Animated,
-} from 'react-native';
+import { Pressable, Text, Image, StyleSheet, ViewStyle, Platform, Animated } from 'react-native';
+
+import type { StyleProp } from 'react-native';
 
 interface FocusableCardProps {
   title: string;
@@ -16,7 +10,7 @@ interface FocusableCardProps {
   onPress: () => void;
   onFocus?: () => void;
   hasTVPreferredFocus?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const FocusableCard: React.FC<FocusableCardProps> = ({
@@ -60,17 +54,8 @@ export const FocusableCard: React.FC<FocusableCardProps> = ({
         onBlur={handleBlur}
         hasTVPreferredFocus={hasTVPreferredFocus}
       >
-        {imageUrl && (
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-        )}
-        <Text
-          style={[styles.title, isFocused && styles.titleFocused]}
-          numberOfLines={2}
-        >
+        {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />}
+        <Text style={[styles.title, isFocused && styles.titleFocused]} numberOfLines={2}>
           {title}
         </Text>
       </Pressable>

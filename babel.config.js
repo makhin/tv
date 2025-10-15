@@ -24,6 +24,7 @@ module.exports = {
           '@types': './src/types',
           '@assets': './src/assets',
           '@theme': './src/theme',
+          '@api': './src/api',
         },
       },
     ],

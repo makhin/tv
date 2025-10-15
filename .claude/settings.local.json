@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm install)",
+      "Bash(pnpm install)",
+      "Bash(pnpm run generate:api:*)",
+      "Bash(pnpm run type-check:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -19,7 +19,7 @@ export const useTVRemote = (handlers: TVRemoteHandler) => {
   useEffect(() => {
     if (!Platform.isTV) return;
 
-    // Обработка Back кнопки на Android TV
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Back пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Android TV
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       if (handlers.onBack) {
         return handlers.onBack();
@@ -27,7 +27,7 @@ export const useTVRemote = (handlers: TVRemoteHandler) => {
       return false;
     });
 
-    // Импорт TVEventHandler только для TV платформ
+    // пїЅпїЅпїЅпїЅпїЅпїЅ TVEventHandler пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ TV пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     let TVEventHandler: any;
     try {
       const rntvos = require('react-native-tvos');
