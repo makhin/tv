@@ -8,10 +8,13 @@ import HomeScreen from '@/screens/HomeScreen';
 import DetailScreen from '@/screens/DetailScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
+import { useAppStore } from '@/store/useAppStore';
+import { personsGetAll } from '@/api/generated/persons/persons';
+import { getTags } from '@/api/generated/tags/tags';
 
 export type RootStackParamList = {
   Home: undefined;
-  Detail: { previewUrl: string };
+  Detail: { photoId: number };
   Settings: undefined;
 };
 
@@ -20,22 +23,47 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const RootNavigator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const { setPersons, setTags } = useAppStore();
 
   useEffect(() => {
-    performAutoLogin();
+    initializeApp();
   }, []);
 
-  const performAutoLogin = async () => {
+  const initializeApp = async () => {
     try {
-      const success = await authService.autoLogin();
-      if (!success) {
+      // 1. Авторизация
+      const authSuccess = await authService.autoLogin();
+      if (!authSuccess) {
         setAuthError('Не удалось авторизоваться');
+        return;
       }
+
+      // 2. Загрузка справочников
+      await loadReferenceData();
     } catch (error) {
-      console.error('Auto-login error:', error);
-      setAuthError('Ошибка авторизации');
+      console.error('App initialization error:', error);
+      setAuthError('Ошибка инициализации');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadReferenceData = async () => {
+    try {
+      // Загружаем persons и tags параллельно
+      const [personsData, tagsData] = await Promise.all([
+        personsGetAll(),
+        getTags(),
+      ]);
+
+      console.log('Loaded persons:', personsData.length);
+      console.log('Loaded tags:', tagsData.length);
+
+      setPersons(personsData);
+      setTags(tagsData);
+    } catch (error) {
+      console.error('Error loading reference data:', error);
+      // Не блокируем приложение, если не удалось загрузить справочники
     }
   };
 
@@ -43,7 +71,7 @@ export const RootNavigator: React.FC = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#3b82f6" />
-        <Text style={styles.loadingText}>Авторизация...</Text>
+        <Text style={styles.loadingText}>Загрузка...</Text>
       </View>
     );
   }

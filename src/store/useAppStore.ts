@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { PersonDto, TagDto } from '@/api';
 
 interface User {
   id: string;
@@ -15,12 +16,16 @@ interface AppState {
   theme: 'light' | 'dark';
   isLoading: boolean;
   focusedItemId: string | null;
+  persons: PersonDto[];
+  tags: TagDto[];
 
   // Actions
   setUser: (user: User | null) => void;
   setTheme: (theme: 'light' | 'dark') => void;
   setIsLoading: (isLoading: boolean) => void;
   setFocusedItemId: (id: string | null) => void;
+  setPersons: (persons: PersonDto[]) => void;
+  setTags: (tags: TagDto[]) => void;
   reset: () => void;
 }
 
@@ -29,6 +34,8 @@ const initialState = {
   theme: 'dark' as const,
   isLoading: false,
   focusedItemId: null,
+  persons: [],
+  tags: [],
 };
 
 export const useAppStore = create<AppState>()(
@@ -44,6 +51,10 @@ export const useAppStore = create<AppState>()(
         setIsLoading: (isLoading) => set({ isLoading }, false, 'setIsLoading'),
 
         setFocusedItemId: (focusedItemId) => set({ focusedItemId }, false, 'setFocusedItemId'),
+
+        setPersons: (persons) => set({ persons }, false, 'setPersons'),
+
+        setTags: (tags) => set({ tags }, false, 'setTags'),
 
         reset: () => set(initialState, false, 'reset'),
       }),
@@ -71,3 +82,5 @@ export const selectUser = (state: AppState) => state.user;
 export const selectTheme = (state: AppState) => state.theme;
 export const selectIsLoading = (state: AppState) => state.isLoading;
 export const selectFocusedItemId = (state: AppState) => state.focusedItemId;
+export const selectPersons = (state: AppState) => state.persons;
+export const selectTags = (state: AppState) => state.tags;
