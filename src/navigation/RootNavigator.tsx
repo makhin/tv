@@ -25,19 +25,18 @@ export const RootNavigator: React.FC = () => {
         screenOptions={{
           headerShown: true,
           animation: Platform.isTV ? 'fade' : 'default',
-          // TV-����������� ���������
           headerTitleStyle: {
             fontSize: Platform.isTV ? 32 : 20,
           },
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: '�������' }} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
         <Stack.Screen
           name="Detail"
           component={DetailScreen}
           options={({ route }) => ({ title: route.params.title })}
         />
-        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: '���������' }} />
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
