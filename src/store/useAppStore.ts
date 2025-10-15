@@ -1,6 +1,6 @@
 // src/store/useAppStore.ts
 import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { PersonDto, TagDto } from '@/api';
 
@@ -60,18 +60,7 @@ export const useAppStore = create<AppState>()(
       }),
       {
         name: 'app-storage',
-        storage: {
-          getItem: async (name) => {
-            const value = await AsyncStorage.getItem(name);
-            return value ? JSON.parse(value) : null;
-          },
-          setItem: async (name, value) => {
-            await AsyncStorage.setItem(name, JSON.stringify(value));
-          },
-          removeItem: async (name) => {
-            await AsyncStorage.removeItem(name);
-          },
-        },
+        storage: createJSONStorage(() => AsyncStorage),
       }
     ),
     { name: 'AppStore' }
