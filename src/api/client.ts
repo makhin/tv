@@ -6,7 +6,7 @@ const STORAGE_TOKEN_KEY = 'auth_token';
 
 // Создаём экземпляр axios
 export const axiosInstance = axios.create({
-  baseURL: 'https://your-api-domain.com/api', // TODO: Настройте базовый URL
+  baseURL: 'http://192.168.1.63:5066', // TODO: Настройте базовый URL
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

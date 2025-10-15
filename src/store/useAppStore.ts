@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// ���� ��� �����
 interface User {
   id: string;
   name: string;
@@ -68,7 +67,6 @@ export const useAppStore = create<AppState>()(
   )
 );
 
-// ��������� ��� ����������� ������������
 export const selectUser = (state: AppState) => state.user;
 export const selectTheme = (state: AppState) => state.theme;
 export const selectIsLoading = (state: AppState) => state.isLoading;
