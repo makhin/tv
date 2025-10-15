@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform } from 'react-native';
 
-// ������ �������
 import HomeScreen from '@/screens/HomeScreen';
 import DetailScreen from '@/screens/DetailScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
@@ -30,7 +29,7 @@ export const RootNavigator: React.FC = () => {
           },
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Photobank' }} />
         <Stack.Screen
           name="Detail"
           component={DetailScreen}
