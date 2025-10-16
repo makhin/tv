@@ -1,56 +1,49 @@
-// src/screens/HomeScreen.tsx
-import React, { useCallback, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, Platform, FlatList, ActivityIndicator } from 'react-native';
+// src/screens/HomeScreen.final.tsx (финальная версия с лучшим UX)
+import React, { useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, Platform, FlatList } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { PhotoListItem } from '@/components/PhotoListItem';
 import { FocusableButton } from '@/components/FocusableButton';
+import { LoadMoreIndicator } from '@/components/LoadMoreIndicator';
 import { useAppStore } from '@/store/useAppStore';
-import { usePhotosSearchPhotos } from '@/api/generated/photos/photos';
-import type { PhotoItemDto } from '@/api';
+import { useInfinitePhotos } from '@/hooks/useInfinitePhotos';
+import { mapPhotosToDisplay, type PhotoItemDisplay } from '@/utils/photoHelpers';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-// Расширенный интерфейс для отображения фото с именами
-interface PhotoItemDisplay extends PhotoItemDto {
-  personNames?: string[];
-  tagNames?: string[];
-}
-
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const { setFocusedItemId } = useAppStore();
+  const { setFocusedItemId, persons, tags } = useAppStore();
 
   // Получаем текущую дату для фильтра "Этот день"
   const today = new Date();
   const currentDay = today.getDate();
-  const currentMonth = today.getMonth() + 1; // getMonth() возвращает 0-11
+  const currentMonth = today.getMonth() + 1;
 
-  const { mutate, data, isPending } = usePhotosSearchPhotos({
-    mutation: {
-      onSuccess: (response) => {
-        console.log('Photos loaded:', response.totalCount);
-      },
-      onError: (error) => {
-        console.error('Error loading photos:', error);
+  // Используем хук для infinity load
+  const {
+    photos: allPhotos,
+    totalCount,
+    hasMore,
+    isLoading,
+    isLoadingMore,
+    error,
+    loadMore,
+    refresh,
+  } = useInfinitePhotos({
+    pageSize: 20,
+    filter: {
+      thisDay: {
+        day: currentDay,
+        month: currentMonth,
       },
     },
   });
 
-  // Выполняем поиск при монтировании компонента
-  useEffect(() => {
-    mutate({
-      data: {
-        page: 1,
-        pageSize: 50,
-        thisDay: {
-          day: currentDay,
-          month: currentMonth,
-        },
-      },
-    });
-  }, [mutate, currentDay, currentMonth]);
-
-  const photos = useMemo(() => data?.items ?? [], [data]);
+  // Преобразуем фото с именами persons и tags
+  const photos = useMemo(() => {
+    return mapPhotosToDisplay(allPhotos, persons, tags);
+  }, [allPhotos, persons, tags]);
 
   const handleItemFocus = useCallback(
     (itemId: number) => {
@@ -82,21 +75,19 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     [navigation, handleItemFocus]
   );
 
-  if (isPending) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3b82f6" />
-        <Text style={styles.loadingText}>Загрузка фото...</Text>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
+  const ListHeaderComponent = useMemo(
+    () => (
       <View style={styles.header}>
         <Text style={styles.title}>Фотоархив</Text>
         <View style={styles.headerButtons}>
-          <Text style={styles.photoCount}>Фото: {photos.length}</Text>
+          <Text style={styles.photoCount}>
+            {isLoading && photos.length === 0
+              ? 'Загрузка...'
+              : `Фото: ${photos.length}${totalCount > 0 ? ` из ${totalCount}` : ''}`}
+          </Text>
+          {photos.length > 0 && (
+            <FocusableButton title="Обновить" onPress={refresh} style={styles.refreshButton} />
+          )}
           <FocusableButton
             title="Настройки"
             onPress={() => navigation.navigate('Settings')}
@@ -104,20 +95,83 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           />
         </View>
       </View>
+    ),
+    [photos.length, totalCount, isLoading, refresh, navigation]
+  );
 
-      {photos.length === 0 ? (
+  const ListFooterComponent = useMemo(
+    () => (
+      <LoadMoreIndicator
+        isVisible={isLoadingMore || (!hasMore && photos.length > 0)}
+        loadedCount={photos.length}
+        totalCount={totalCount}
+        hasMore={hasMore}
+      />
+    ),
+    [isLoadingMore, hasMore, photos.length, totalCount]
+  );
+
+  const ListEmptyComponent = useMemo(() => {
+    if (isLoading) {
+      return (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Нет фото за этот день</Text>
+          <LoadMoreIndicator isVisible={true} loadedCount={0} totalCount={0} hasMore={true} />
+          <Text style={styles.loadingText}>Загрузка фото...</Text>
         </View>
-      ) : (
-        <FlatList
-          data={photos}
-          renderItem={renderItem}
-          keyExtractor={(item) => String(item.id)}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.errorText}>❌ Ошибка загрузки</Text>
+          <Text style={styles.errorDetail}>{error.message}</Text>
+          <FocusableButton title="Повторить" onPress={refresh} hasTVPreferredFocus />
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>📅 Нет фото за этот день</Text>
+        <Text style={styles.emptySubtext}>
+          {currentDay}.{String(currentMonth).padStart(2, '0')}
+        </Text>
+      </View>
+    );
+  }, [isLoading, error, refresh, currentDay, currentMonth]);
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={photos}
+        renderItem={renderItem}
+        keyExtractor={(item) => String(item.id)}
+        contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListHeaderComponent={ListHeaderComponent}
+        ListFooterComponent={ListFooterComponent}
+        ListEmptyComponent={ListEmptyComponent}
+        removeClippedSubviews={Platform.isTV}
+        maxToRenderPerBatch={10}
+        windowSize={Platform.isTV ? 5 : 10}
+        initialNumToRender={10}
+        // Pull to refresh для мобильных устройств
+        refreshing={isLoading && photos.length > 0}
+        onRefresh={Platform.isTV ? undefined : refresh}
+        // Оптимизация для TV
+        getItemLayout={
+          Platform.isTV
+            ? (data, index) => ({
+                length: 102, // Примерная высота элемента
+                offset: 102 * index,
+                index,
+              })
+            : undefined
+        }
+      />
     </View>
   );
 };
@@ -126,28 +180,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1e3a5f',
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#1e3a5f',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: Platform.isTV ? 24 : 16,
-    color: '#9ca3af',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  emptyText: {
-    fontSize: Platform.isTV ? 28 : 18,
-    color: '#9ca3af',
-    textAlign: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -171,12 +203,50 @@ const styles = StyleSheet.create({
     fontSize: Platform.isTV ? 18 : 14,
     color: '#d1d5db',
   },
+  refreshButton: {
+    minWidth: Platform.isTV ? 120 : 80,
+  },
   settingsButton: {
     minWidth: Platform.isTV ? 150 : 100,
   },
   listContainer: {
     paddingHorizontal: Platform.isTV ? 32 : 16,
-    paddingVertical: Platform.isTV ? 16 : 8,
+    paddingBottom: Platform.isTV ? 16 : 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    gap: 16,
+    minHeight: 400,
+  },
+  emptyText: {
+    fontSize: Platform.isTV ? 28 : 18,
+    color: '#9ca3af',
+    textAlign: 'center',
+  },
+  emptySubtext: {
+    fontSize: Platform.isTV ? 20 : 14,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  errorText: {
+    fontSize: Platform.isTV ? 28 : 18,
+    color: '#ef4444',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  errorDetail: {
+    fontSize: Platform.isTV ? 18 : 14,
+    color: '#9ca3af',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: Platform.isTV ? 24 : 16,
+    color: '#9ca3af',
   },
 });
 

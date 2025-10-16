@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Pressable, Text, Image, StyleSheet, View, Platform } from 'react-native';
 import { format, parseISO } from 'date-fns';
+import { TagBadge } from './TagBadge';
 
 interface PhotoListItemProps {
   thumbnailUrl?: string | null;
@@ -54,6 +55,13 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
   const formattedDate = formatDate(takenDate);
   const caption = captions && captions.length > 0 ? captions[0] : '';
 
+  // Ограничиваем количество показываемых бейджей
+  const MAX_BADGES = 5;
+  const visiblePersons = personNames.slice(0, MAX_BADGES);
+  const remainingPersons = personNames.length - MAX_BADGES;
+  const visibleTags = tagNames.slice(0, MAX_BADGES);
+  const remainingTags = tagNames.length - MAX_BADGES;
+
   return (
     <Pressable
       style={[styles.container, isFocused && styles.containerFocused]}
@@ -81,7 +89,7 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
 
       {/* Content */}
       <View style={styles.content}>
-        {/* Row 1: Storage, Name, Date */}
+        {/* Row 1: Storage, Name, Date, Caption */}
         <View style={styles.row}>
           <Text style={[styles.rowText, isFocused && styles.rowTextFocused]} numberOfLines={1}>
             📁 {storageName}
@@ -101,35 +109,40 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
               </Text>
             </>
           )}
-        </View>
-
-        {/* Row 2: Caption, Persons, Tags */}
-        <View style={styles.row}>
-          {/* Caption */}
           {caption && (
             <>
+              <Text style={styles.separator}>•</Text>
               <Text style={[styles.rowText, isFocused && styles.rowTextFocused]} numberOfLines={1}>
                 💬 {caption}
               </Text>
-              <Text style={styles.separator}>•</Text>
             </>
           )}
+        </View>
 
+        {/* Row 2: Persons, Tags */}
+        <View style={styles.row}>
           {/* Persons */}
           {personNames.length > 0 && (
-            <>
-              <Text style={[styles.rowText, isFocused && styles.rowTextFocused]}>
-                👥 {personNames.join(', ')}
-              </Text>
-              <Text style={styles.separator}>•</Text>
-            </>
+            <View style={styles.badgesContainer}>
+              {visiblePersons.map((person, index) => (
+                <TagBadge key={`person-${index}`} label={person} variant="person" />
+              ))}
+              {remainingPersons > 0 && (
+                <TagBadge label={`+${remainingPersons}`} variant="person" />
+              )}
+            </View>
           )}
 
           {/* Tags */}
           {tagNames.length > 0 && (
-            <Text style={[styles.rowText, isFocused && styles.rowTextFocused]} numberOfLines={1}>
-              🏷️ {tagNames.join(', ')}
-            </Text>
+            <View style={styles.badgesContainer}>
+              {visibleTags.map((tag, index) => (
+                <TagBadge key={`tag-${index}`} label={tag} variant="tag" />
+              ))}
+              {remainingTags > 0 && (
+                <TagBadge label={`+${remainingTags}`} variant="tag" />
+              )}
+            </View>
           )}
         </View>
       </View>
@@ -217,5 +230,10 @@ const styles = StyleSheet.create({
   separator: {
     fontSize: Platform.isTV ? 14 : 12,
     color: '#6b7280',
+  },
+  badgesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
   },
 });
