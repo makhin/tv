@@ -52,6 +52,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     [setFocusedItemId]
   );
 
+  // Получаем список ID всех фото для навигации
+  const photoIds = useMemo(() => photos.map((p) => p.id), [photos]);
+
   const renderItem = useCallback(
     ({ item, index }: { item: PhotoItemDisplay; index: number }) => (
       <PhotoListItem
@@ -66,13 +69,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         onPress={() => {
           navigation.navigate('Detail', {
             photoId: item.id,
+            photoIds: photoIds,
           });
         }}
         onFocus={() => handleItemFocus(item.id)}
         hasTVPreferredFocus={index === 0}
       />
     ),
-    [navigation, handleItemFocus]
+    [navigation, handleItemFocus, photoIds]
   );
 
   const ListHeaderComponent = useMemo(

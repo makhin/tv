@@ -14,7 +14,7 @@ import { getTags } from '@/api/generated/tags/tags';
 
 export type RootStackParamList = {
   Home: undefined;
-  Detail: { photoId: number };
+  Detail: { photoId: number; photoIds: number[] };
   Settings: undefined;
 };
 

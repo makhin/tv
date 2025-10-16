@@ -1,6 +1,6 @@
 // src/screens/DetailScreen.tsx
-import React from 'react';
-import { View, StyleSheet, Image, Dimensions, ActivityIndicator, Text } from 'react-native';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { View, StyleSheet, Image, Dimensions, ActivityIndicator, Text, Platform, Pressable, TVEventHandler as TVEventHandlerClass } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
@@ -9,10 +9,56 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 const { width, height } = Dimensions.get('window');
 
-const DetailScreen: React.FC<Props> = ({ route }) => {
-  const { photoId } = route.params;
+const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
+  const { photoId, photoIds } = route.params;
 
   const { data: photo, isLoading, isError } = usePhotosGetPhoto(photoId);
+
+  // Находим текущий индекс фото в списке
+  const currentIndex = photoIds.indexOf(photoId);
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex < photoIds.length - 1;
+
+  const handleKeyPress = useCallback((evt: any) => {
+    console.log('Key press event:', evt.nativeEvent);
+  }, []);
+
+  // Используем TVEventHandler через addListener
+  useEffect(() => {
+    if (!Platform.isTV) return;
+
+    console.log('Setting up TV event listener...');
+
+    const handleTVEvent = (evt: any) => {
+      console.log('TV Event received:', evt.eventType);
+
+      if (evt.eventType === 'up') {
+        // Предыдущее фото
+        if (currentIndex > 0) {
+          const previousPhotoId = photoIds[currentIndex - 1];
+          console.log('Going to previous photo:', previousPhotoId);
+          navigation.setParams({ photoId: previousPhotoId });
+        }
+      } else if (evt.eventType === 'down') {
+        // Следующее фото
+        if (currentIndex < photoIds.length - 1) {
+          const nextPhotoId = photoIds[currentIndex + 1];
+          console.log('Going to next photo:', nextPhotoId);
+          navigation.setParams({ photoId: nextPhotoId });
+        }
+      }
+    };
+
+    const subscription = (TVEventHandlerClass as any).addListener(handleTVEvent);
+    console.log('TV event listener added');
+
+    return () => {
+      if (subscription && subscription.remove) {
+        subscription.remove();
+        console.log('TV event listener removed');
+      }
+    };
+  }, [currentIndex, photoIds, navigation]);
 
   if (isLoading) {
     return (
@@ -32,7 +78,11 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={() => console.log('Screen pressed')}
+      hasTVPreferredFocus={true}
+    >
       {photo.previewUrl && (
         <Image
           source={{ uri: photo.previewUrl }}
@@ -40,7 +90,14 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
           resizeMode="contain"
         />
       )}
-    </View>
+
+      {/* Photo counter */}
+      <View style={styles.photoCounter}>
+        <Text style={styles.photoCounterText}>
+          {currentIndex + 1} / {photoIds.length}
+        </Text>
+      </View>
+    </Pressable>
   );
 };
 
@@ -77,6 +134,20 @@ const styles = StyleSheet.create({
   image: {
     width: width,
     height: height,
+  },
+  photoCounter: {
+    position: 'absolute',
+    bottom: Platform.isTV ? 40 : 20,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: Platform.isTV ? 24 : 16,
+    paddingVertical: Platform.isTV ? 12 : 8,
+    borderRadius: 8,
+  },
+  photoCounterText: {
+    color: '#ffffff',
+    fontSize: Platform.isTV ? 20 : 14,
+    fontWeight: '600',
   },
 });
 
