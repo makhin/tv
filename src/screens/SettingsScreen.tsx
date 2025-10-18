@@ -1,5 +1,5 @@
 // src/screens/SettingsScreen.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import {
   selectCredentials,
   useAppStore,
 } from '@/store/useAppStore';
+import { useThemePalette, type ThemePalette } from '@/config/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
@@ -28,6 +29,8 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
   }));
   const storedCredentials = useAppStore(selectCredentials);
   const persistCredentials = useAppStore((state) => state.setCredentials);
+  const palette = useThemePalette();
+  const styles = useMemo(() => createStyles(palette), [palette]);
 
   const [username, setUsername] = useState(storedCredentials.username);
   const [password, setPassword] = useState(storedCredentials.password);
@@ -119,7 +122,7 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
               value={username}
               onChangeText={setUsername}
               placeholder="Введите имя пользователя"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={palette.placeholder}
               autoCapitalize="none"
             />
           </View>
@@ -131,7 +134,7 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
               value={password}
               onChangeText={setPassword}
               placeholder="Введите пароль"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={palette.placeholder}
               secureTextEntry
             />
           </View>
@@ -155,59 +158,63 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111827',
-  },
-  content: {
-    padding: Platform.isTV ? 32 : 16,
-  },
-  title: {
-    fontSize: Platform.isTV ? 42 : 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 32,
-  },
-  section: {
-    backgroundColor: '#1f2937',
-    padding: Platform.isTV ? 24 : 16,
-    borderRadius: 12,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: Platform.isTV ? 28 : 20,
-    fontWeight: '600',
-    color: '#ffffff',
-    marginBottom: 16,
-  },
-  infoText: {
-    fontSize: Platform.isTV ? 20 : 14,
-    color: '#e5e7eb',
-    lineHeight: Platform.isTV ? 32 : 22,
-    marginBottom: 8,
-  },
-  buttonSpacing: {
-    marginTop: 12,
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: Platform.isTV ? 22 : 16,
-    color: '#e5e7eb',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#111827',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#374151',
-    paddingVertical: Platform.isTV ? 16 : 12,
-    paddingHorizontal: Platform.isTV ? 20 : 14,
-    color: '#ffffff',
-    fontSize: Platform.isTV ? 22 : 16,
-  },
-});
+const createStyles = (theme: ThemePalette) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    content: {
+      padding: Platform.isTV ? 32 : 16,
+      gap: Platform.isTV ? 24 : 16,
+    },
+    title: {
+      fontSize: Platform.isTV ? 42 : 28,
+      fontWeight: 'bold',
+      color: theme.textPrimary,
+      marginBottom: 32,
+    },
+    section: {
+      backgroundColor: theme.card,
+      padding: Platform.isTV ? 24 : 16,
+      borderRadius: 12,
+      marginBottom: 24,
+      borderWidth: 1,
+      borderColor: theme.borderMuted,
+    },
+    sectionTitle: {
+      fontSize: Platform.isTV ? 28 : 20,
+      fontWeight: '600',
+      color: theme.textPrimary,
+      marginBottom: 16,
+    },
+    infoText: {
+      fontSize: Platform.isTV ? 20 : 14,
+      color: theme.textSecondary,
+      lineHeight: Platform.isTV ? 32 : 22,
+      marginBottom: 8,
+    },
+    buttonSpacing: {
+      marginTop: 12,
+    },
+    inputGroup: {
+      marginBottom: 16,
+    },
+    label: {
+      fontSize: Platform.isTV ? 22 : 16,
+      color: theme.textSecondary,
+      marginBottom: 8,
+    },
+    input: {
+      backgroundColor: theme.inputBackground,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.inputBorder,
+      paddingVertical: Platform.isTV ? 16 : 12,
+      paddingHorizontal: Platform.isTV ? 20 : 14,
+      color: theme.inputText,
+      fontSize: Platform.isTV ? 22 : 16,
+    },
+  });
 
 export default SettingsScreen;
