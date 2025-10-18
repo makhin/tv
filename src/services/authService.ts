@@ -2,9 +2,33 @@
 import { authLogin } from '@/api/generated/auth/auth';
 import { authHelpers } from '@/api/client';
 import { authConfig, type AuthCredentials } from '@/config/authConfig';
+import { useAppStore, selectCredentials, type CredentialsState } from '@/store/useAppStore';
+
+type AutoLoginInput = Partial<AuthCredentials> & Partial<CredentialsState>;
+
+const normalizeCredentials = (
+  credentials?: AutoLoginInput | null
+): (AuthCredentials & { rememberMe?: boolean }) | null => {
+  if (!credentials) {
+    return null;
+  }
+
+  const email = credentials.email?.trim() ?? credentials.username?.trim();
+  const password = credentials.password?.trim();
+
+  if (!email || !password) {
+    return null;
+  }
+
+  return {
+    email,
+    password,
+    rememberMe: credentials.rememberMe,
+  };
+};
 
 export const authService = {
-  autoLogin: async (credentials?: AuthCredentials): Promise<boolean> => {
+  autoLogin: async (credentials?: AutoLoginInput): Promise<boolean> => {
     try {
       // Проверяем, есть ли уже токен
       const existingToken = await authHelpers.getToken();
@@ -13,8 +37,16 @@ export const authService = {
         return true;
       }
 
+      const storedCredentials = normalizeCredentials(
+        selectCredentials(useAppStore.getState())
+      );
+
+      const providedCredentials = normalizeCredentials(credentials);
+
       const resolvedCredentials =
-        credentials ?? authConfig.loadEnvironmentCredentials();
+        storedCredentials ??
+        providedCredentials ??
+        normalizeCredentials(authConfig.loadEnvironmentCredentials());
 
       if (!resolvedCredentials?.email || !resolvedCredentials?.password) {
         console.warn('Auto-login aborted: credentials are not available');
