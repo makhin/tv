@@ -121,9 +121,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               ? 'Загрузка...'
               : `Фото: ${photos.length}${totalCount > 0 ? ` из ${totalCount}` : ''}`}
           </Text>
-          {photos.length > 0 && (
-            <FocusableButton title="Обновить" onPress={refresh} style={styles.refreshButton} />
-          )}
           <FocusableButton
             title="Настройки"
             onPress={() => navigation.navigate('Settings')}
@@ -132,7 +129,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       </View>
     ),
-    [photos.length, totalCount, isLoading, refresh, navigation]
+    [photos.length, totalCount, isLoading, navigation]
   );
 
   const ListFooterComponent = useMemo(
@@ -258,9 +255,6 @@ const styles = StyleSheet.create({
   photoCount: {
     fontSize: Platform.isTV ? 18 : 14,
     color: '#d1d5db',
-  },
-  refreshButton: {
-    minWidth: Platform.isTV ? 120 : 80,
   },
   settingsButton: {
     minWidth: Platform.isTV ? 150 : 100,
