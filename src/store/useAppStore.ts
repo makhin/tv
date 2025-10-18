@@ -10,7 +10,7 @@ interface User {
   email: string;
 }
 
-interface CredentialsState {
+export interface CredentialsState {
   username: string;
   password: string;
 }
@@ -32,7 +32,7 @@ interface AppState {
   setFocusedItemId: (id: string | null) => void;
   setPersons: (persons: PersonDto[]) => void;
   setTags: (tags: TagDto[]) => void;
-  setCredentials: (credentials: CredentialsState) => void;
+  setCredentials: (credentials: Partial<CredentialsState>) => void;
   reset: () => void;
 }
 
@@ -67,7 +67,17 @@ export const useAppStore = create<AppState>()(
 
         setTags: (tags) => set({ tags }, false, 'setTags'),
 
-        setCredentials: (credentials) => set({ credentials }, false, 'setCredentials'),
+        setCredentials: (credentials) =>
+          set(
+            (state) => ({
+              credentials: {
+                ...state.credentials,
+                ...credentials,
+              },
+            }),
+            false,
+            'setCredentials'
+          ),
 
         reset: () => set(initialState, false, 'reset'),
       }),
@@ -87,3 +97,5 @@ export const selectFocusedItemId = (state: AppState) => state.focusedItemId;
 export const selectPersons = (state: AppState) => state.persons;
 export const selectTags = (state: AppState) => state.tags;
 export const selectCredentials = (state: AppState) => state.credentials;
+export const selectUsername = (state: AppState) => state.credentials.username;
+export const selectPassword = (state: AppState) => state.credentials.password;
