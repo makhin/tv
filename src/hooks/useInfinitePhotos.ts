@@ -96,7 +96,21 @@ export const useInfinitePhotos = ({
   );
 
   const loadMore = useCallback(() => {
+    console.log('loadMore called', {
+      isPending,
+      hasMore,
+      isLoadingMore: isLoadingMore.current,
+      enabled,
+      currentPage,
+    });
+
     if (isPending || !hasMore || isLoadingMore.current || !enabled) {
+      console.log('loadMore blocked:', {
+        isPending,
+        hasMore,
+        isLoadingMore: isLoadingMore.current,
+        enabled,
+      });
       return;
     }
 
@@ -104,8 +118,22 @@ export const useInfinitePhotos = ({
     loadPage(currentPage + 1);
   }, [isPending, hasMore, currentPage, loadPage, enabled]);
 
+  // Загружаем первую страницу при монтировании или изменении фильтра
+  useEffect(() => {
+    if (enabled) {
+      console.log('Refreshing photos...');
+      setAllPhotos([]);
+      setCurrentPage(1);
+      setHasMore(true);
+      setError(null);
+      isInitialLoad.current = true;
+      loadPage(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, JSON.stringify(filter)]); // Используем JSON.stringify для deep comparison
+
   const refresh = useCallback(() => {
-    console.log('Refreshing photos...');
+    console.log('Manual refresh triggered...');
     setAllPhotos([]);
     setCurrentPage(1);
     setHasMore(true);
@@ -113,13 +141,6 @@ export const useInfinitePhotos = ({
     isInitialLoad.current = true;
     loadPage(1);
   }, [loadPage]);
-
-  // Загружаем первую страницу при монтировании или изменении фильтра
-  useEffect(() => {
-    if (enabled) {
-      refresh();
-    }
-  }, [enabled, JSON.stringify(filter)]); // Используем JSON.stringify для deep comparison
 
   return {
     photos: allPhotos,

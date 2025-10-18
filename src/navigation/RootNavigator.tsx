@@ -6,6 +6,7 @@ import { Platform, View, Text, ActivityIndicator, StyleSheet } from 'react-nativ
 
 import HomeScreen from '@/screens/HomeScreen';
 import DetailScreen from '@/screens/DetailScreen';
+import MetadataScreen from '@/screens/MetadataScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
 import { useAppStore } from '@/store/useAppStore';
@@ -15,6 +16,7 @@ import { getTags } from '@/api/generated/tags/tags';
 export type RootStackParamList = {
   Home: undefined;
   Detail: { photoId: number; photoIds: number[] };
+  Metadata: { photoId: number; photoIds: number[] };
   Settings: undefined;
 };
 
@@ -89,11 +91,8 @@ export const RootNavigator: React.FC = () => {
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
-          headerShown: true,
+          headerShown: false,
           animation: Platform.isTV ? 'fade' : 'default',
-          headerTitleStyle: {
-            fontSize: Platform.isTV ? 32 : 20,
-          },
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Photobank' }} />
@@ -101,6 +100,11 @@ export const RootNavigator: React.FC = () => {
           name="Detail"
           component={DetailScreen}
           options={{ title: 'Photo' }}
+        />
+        <Stack.Screen
+          name="Metadata"
+          component={MetadataScreen}
+          options={{ title: 'Photo Metadata' }}
         />
         <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
       </Stack.Navigator>

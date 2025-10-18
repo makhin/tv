@@ -4,6 +4,7 @@ import { View, StyleSheet, Image, Dimensions, ActivityIndicator, Text, Platform,
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
+import { useAppStore } from '@/store/useAppStore';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
@@ -11,6 +12,7 @@ const { width, height } = Dimensions.get('window');
 
 const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const { photoId, photoIds } = route.params;
+  const { setFocusedItemId } = useAppStore();
 
   const { data: photo, isLoading, isError } = usePhotosGetPhoto(photoId);
 
@@ -18,6 +20,12 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const currentIndex = photoIds.indexOf(photoId);
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex < photoIds.length - 1;
+
+  // Сохраняем текущий photoId при каждом изменении
+  useEffect(() => {
+    console.log('Current photoId changed to:', photoId);
+    setFocusedItemId(String(photoId));
+  }, [photoId, setFocusedItemId]);
 
   const handleKeyPress = useCallback((evt: any) => {
     console.log('Key press event:', evt.nativeEvent);
@@ -46,6 +54,14 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
           console.log('Going to next photo:', nextPhotoId);
           navigation.setParams({ photoId: nextPhotoId });
         }
+      } else if (evt.eventType === 'right') {
+        // Переход на экран метаданных
+        console.log('Navigating to metadata screen');
+        navigation.navigate('Metadata', { photoId, photoIds });
+      } else if (evt.eventType === 'left') {
+        // Возврат на HomeScreen (photoId уже сохранен в useEffect)
+        console.log('Going back to home screen with photoId:', photoId);
+        navigation.goBack();
       }
     };
 
@@ -58,7 +74,7 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
         console.log('TV event listener removed');
       }
     };
-  }, [currentIndex, photoIds, navigation]);
+  }, [currentIndex, photoIds, photoId, navigation]);
 
   if (isLoading) {
     return (

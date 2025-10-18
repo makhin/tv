@@ -1,5 +1,5 @@
 // src/screens/HomeScreen.final.tsx (финальная версия с лучшим UX)
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Platform, FlatList } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
@@ -13,7 +13,8 @@ import { mapPhotosToDisplay, type PhotoItemDisplay } from '@/utils/photoHelpers'
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const { setFocusedItemId, persons, tags } = useAppStore();
+  const { setFocusedItemId, focusedItemId, persons, tags } = useAppStore();
+  const flatListRef = useRef<FlatList>(null);
 
   // Получаем текущую дату для фильтра "Этот день"
   const today = new Date();
@@ -45,6 +46,28 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     return mapPhotosToDisplay(allPhotos, persons, tags);
   }, [allPhotos, persons, tags]);
 
+  // Обрабатываем возврат на экран - скроллим к сохраненному фото
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (focusedItemId && photos.length > 0) {
+        const index = photos.findIndex((p) => String(p.id) === focusedItemId);
+        if (index !== -1 && flatListRef.current) {
+          console.log('Scrolling to saved photo index:', index);
+          // Небольшая задержка, чтобы список успел отрендериться
+          setTimeout(() => {
+            flatListRef.current?.scrollToIndex({
+              index,
+              animated: false,
+              viewPosition: 0.5, // Центрируем элемент
+            });
+          }, 100);
+        }
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, focusedItemId, photos]);
+
   const handleItemFocus = useCallback(
     (itemId: number) => {
       setFocusedItemId(String(itemId));
@@ -56,27 +79,36 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const photoIds = useMemo(() => photos.map((p) => p.id), [photos]);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: PhotoItemDisplay; index: number }) => (
-      <PhotoListItem
-        thumbnailUrl={item.thumbnailUrl}
-        name={item.name}
-        storageName={item.storageName}
-        takenDate={item.takenDate}
-        captions={item.captions}
-        personNames={item.personNames}
-        tagNames={item.tagNames}
-        isAdultContent={item.isAdultContent}
-        onPress={() => {
-          navigation.navigate('Detail', {
-            photoId: item.id,
-            photoIds: photoIds,
-          });
-        }}
-        onFocus={() => handleItemFocus(item.id)}
-        hasTVPreferredFocus={index === 0}
-      />
-    ),
-    [navigation, handleItemFocus, photoIds]
+    ({ item, index }: { item: PhotoItemDisplay; index: number }) => {
+      // Проверяем, должен ли этот элемент получить фокус
+      const shouldFocus = focusedItemId
+        ? String(item.id) === focusedItemId
+        : index === 0;
+
+      return (
+        <PhotoListItem
+          thumbnailUrl={item.thumbnailUrl}
+          name={item.name}
+          storageName={item.storageName}
+          takenDate={item.takenDate}
+          captions={item.captions}
+          personNames={item.personNames}
+          tagNames={item.tagNames}
+          isAdultContent={item.isAdultContent}
+          onPress={() => {
+            // Сохраняем ID перед переходом
+            setFocusedItemId(String(item.id));
+            navigation.navigate('Detail', {
+              photoId: item.id,
+              photoIds: photoIds,
+            });
+          }}
+          onFocus={() => handleItemFocus(item.id)}
+          hasTVPreferredFocus={shouldFocus}
+        />
+      );
+    },
+    [navigation, handleItemFocus, photoIds, focusedItemId, setFocusedItemId]
   );
 
   const ListHeaderComponent = useMemo(
@@ -148,12 +180,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <FlatList
+        ref={flatListRef}
         data={photos}
         renderItem={renderItem}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
-        onEndReached={loadMore}
+        onEndReached={() => {
+          console.log('onEndReached triggered', {
+            hasMore,
+            isLoadingMore,
+            photosCount: photos.length,
+            totalCount,
+          });
+          loadMore();
+        }}
         onEndReachedThreshold={0.5}
         ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={ListFooterComponent}
@@ -175,6 +216,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               })
             : undefined
         }
+        onScrollToIndexFailed={(info) => {
+          console.log('Scroll to index failed:', info);
+          // Попробуем еще раз через небольшую задержку
+          setTimeout(() => {
+            flatListRef.current?.scrollToIndex({
+              index: info.index,
+              animated: false,
+              viewPosition: 0.5,
+            });
+          }, 500);
+        }}
       />
     </View>
   );
