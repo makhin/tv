@@ -33,64 +33,73 @@ export const useInfinitePhotos = ({
 
   const isLoadingMore = useRef(false);
   const isInitialLoad = useRef(true);
+  const latestRequestIdRef = useRef(0);
 
-  const { mutate, isPending } = usePhotosSearchPhotos({
-    mutation: {
-      onSuccess: (response) => {
-        console.log(`Page ${currentPage} loaded:`, response.items?.length || 0, 'photos');
-
-        if (response.items) {
-          setAllPhotos((prev) => {
-            // Для первой страницы заменяем
-            if (currentPage === 1) {
-              return response.items || [];
-            }
-
-            // Для остальных добавляем, фильтруя дубликаты
-            const existingIds = new Set(prev.map((p) => p.id));
-            const newItems = (response.items || []).filter((item) => !existingIds.has(item.id));
-            return [...prev, ...newItems];
-          });
-
-          setTotalCount(response.totalCount || 0);
-
-          // Проверяем есть ли еще данные
-          const loadedCount =
-            currentPage === 1
-              ? response.items?.length || 0
-              : allPhotos.length + (response.items?.length || 0);
-
-          setHasMore(loadedCount < (response.totalCount || 0));
-          setError(null);
-        }
-
-        isLoadingMore.current = false;
-        isInitialLoad.current = false;
-      },
-      onError: (err) => {
-        console.error('Error loading photos:', err);
-        setError(err as Error);
-        isLoadingMore.current = false;
-        isInitialLoad.current = false;
-        setHasMore(false);
-      },
-    },
-  });
+  const { mutate, isPending } = usePhotosSearchPhotos();
 
   const loadPage = useCallback(
     (page: number) => {
-      if (isLoadingMore.current || !enabled) return;
+      if (!enabled) return;
+      if (page !== 1 && isLoadingMore.current) return;
+
+      const requestId = latestRequestIdRef.current + 1;
+      latestRequestIdRef.current = requestId;
 
       isLoadingMore.current = true;
       setCurrentPage(page);
 
-      mutate({
-        data: {
-          ...filter,
-          page,
-          pageSize,
+      mutate(
+        {
+          data: {
+            ...filter,
+            page,
+            pageSize,
+          },
         },
-      });
+        {
+          onSuccess: (response) => {
+            if (latestRequestIdRef.current !== requestId) {
+              return;
+            }
+
+            console.log(`Page ${page} loaded:`, response.items?.length || 0, 'photos');
+
+            const responseItems = response.items ?? [];
+            const total = response.totalCount ?? 0;
+
+            setTotalCount(total);
+            setError(null);
+
+            setAllPhotos((prev) => {
+              if (page === 1) {
+                const nextPhotos = responseItems;
+                setHasMore(nextPhotos.length < total);
+                return nextPhotos;
+              }
+
+              const existingIds = new Set(prev.map((p) => p.id));
+              const newItems = responseItems.filter((item) => !existingIds.has(item.id));
+              const nextPhotos = [...prev, ...newItems];
+              setHasMore(nextPhotos.length < total);
+              return nextPhotos;
+            });
+
+            isLoadingMore.current = false;
+            isInitialLoad.current = false;
+          },
+          onError: (err) => {
+            if (latestRequestIdRef.current !== requestId) {
+              return;
+            }
+
+            console.error('Error loading photos:', err);
+            setError(err as Error);
+            isLoadingMore.current = false;
+            isInitialLoad.current = false;
+            setHasMore(false);
+          },
+        }
+      );
     },
     [mutate, filter, pageSize, enabled]
   );
@@ -127,6 +136,7 @@ export const useInfinitePhotos = ({
       setHasMore(true);
       setError(null);
       isInitialLoad.current = true;
+      latestRequestIdRef.current += 1;
       loadPage(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,6 +149,7 @@ export const useInfinitePhotos = ({
     setHasMore(true);
     setError(null);
     isInitialLoad.current = true;
+    latestRequestIdRef.current += 1;
     loadPage(1);
   }, [loadPage]);
 
