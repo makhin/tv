@@ -9,6 +9,7 @@ import DetailScreen from '@/screens/DetailScreen';
 import MetadataScreen from '@/screens/MetadataScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
+import { authConfig } from '@/config/authConfig';
 import { useAppStore } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
@@ -34,7 +35,9 @@ export const RootNavigator: React.FC = () => {
   const initializeApp = async () => {
     try {
       // 1. Авторизация
-      const authSuccess = await authService.autoLogin();
+      const authSuccess = await authService.autoLogin(
+        authConfig.loadEnvironmentCredentials() ?? undefined
+      );
       if (!authSuccess) {
         setAuthError('Не удалось авторизоваться');
         return;
