@@ -31,6 +31,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const RootNavigator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [shouldShowSettings, setShouldShowSettings] = useState(false);
   const { setPersons, setTags } = useAppStore((state) => ({
     setPersons: state.setPersons,
     setTags: state.setTags,
@@ -77,12 +78,28 @@ export const RootNavigator: React.FC = () => {
   const initializeApp = useCallback(async () => {
     try {
       setIsLoading(true);
-      // 1. Авторизация
-      const authSuccess = await authService.autoLogin(credentials);
-      if (!authSuccess) {
-        setAuthError('Не удалось авторизоваться');
+      setAuthError(null);
+
+      const trimmedUsername = credentials.username.trim();
+      const hasUsername = trimmedUsername.length > 0;
+      const hasPassword = credentials.password.length > 0;
+
+      if (!hasUsername || !hasPassword) {
+        setShouldShowSettings(true);
         return;
       }
+
+      // 1. Авторизация
+      const authSuccess = await authService.autoLogin({
+        ...credentials,
+        username: trimmedUsername,
+      });
+      if (!authSuccess) {
+        setShouldShowSettings(true);
+        return;
+      }
+
+      setShouldShowSettings(false);
 
       // 2. Загрузка справочников
       await loadReferenceData();
@@ -98,73 +115,68 @@ export const RootNavigator: React.FC = () => {
     initializeApp();
   }, [initializeApp]);
 
-  const content = () => {
-    if (isLoading) {
-      return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={palette.activityIndicator} />
-          <Text style={styles.loadingText}>Загрузка...</Text>
-        </View>
-      );
-    }
+  return (
+    <ThemeProvider theme={themeName}>
+      <View style={styles.container}>
+        <NavigationContainer theme={navigationTheme}>
+          <Stack.Navigator
+            initialRouteName={shouldShowSettings ? 'Settings' : 'Home'}
+            screenOptions={{
+              headerShown: false,
+              animation: Platform.isTV ? 'fade' : 'default',
+            }}
+          >
+            <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Photobank' }} />
+            <Stack.Screen
+              name="Detail"
+              component={DetailScreen}
+              options={{ title: 'Photo' }}
+            />
+            <Stack.Screen
+              name="Metadata"
+              component={MetadataScreen}
+              options={{ title: 'Photo Metadata' }}
+            />
+            <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
+          </Stack.Navigator>
+        </NavigationContainer>
 
-    if (authError) {
-      return (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{authError}</Text>
-        </View>
-      );
-    }
+        {isLoading && (
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color={palette.activityIndicator} />
+            <Text style={styles.loadingText}>Загрузка...</Text>
+          </View>
+        )}
 
-    return (
-      <NavigationContainer theme={navigationTheme}>
-        <Stack.Navigator
-          initialRouteName="Home"
-          screenOptions={{
-            headerShown: false,
-            animation: Platform.isTV ? 'fade' : 'default',
-          }}
-        >
-          <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Photobank' }} />
-          <Stack.Screen
-            name="Detail"
-            component={DetailScreen}
-            options={{ title: 'Photo' }}
-          />
-          <Stack.Screen
-            name="Metadata"
-            component={MetadataScreen}
-            options={{ title: 'Photo Metadata' }}
-          />
-          <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  };
-
-  return <ThemeProvider theme={themeName}>{content()}</ThemeProvider>;
+        {!isLoading && authError && (
+          <View style={[styles.overlay, styles.errorOverlay]}>
+            <Text style={styles.errorText}>{authError}</Text>
+          </View>
+        )}
+      </View>
+    </ThemeProvider>
+  );
 };
 
 const createStyles = (theme: ThemePalette) =>
   StyleSheet.create({
-    loadingContainer: {
+    container: {
       flex: 1,
       backgroundColor: theme.background,
+    },
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: theme.background,
+      padding: 24,
     },
     loadingText: {
       marginTop: 16,
       fontSize: Platform.isTV ? 24 : 16,
       color: theme.textMuted,
     },
-    errorContainer: {
-      flex: 1,
-      backgroundColor: theme.background,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 24,
-    },
+    errorOverlay: {},
     errorText: {
       fontSize: Platform.isTV ? 28 : 18,
       color: theme.danger,
