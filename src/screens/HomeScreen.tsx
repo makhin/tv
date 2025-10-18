@@ -165,16 +165,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         // Pull to refresh для мобильных устройств
         refreshing={isLoading && photos.length > 0}
         onRefresh={Platform.isTV ? undefined : refresh}
-        // Оптимизация для TV
-        getItemLayout={
-          Platform.isTV
-            ? (data, index) => ({
-                length: 102, // Примерная высота элемента
-                offset: 102 * index,
-                index,
-              })
-            : undefined
-        }
       />
     </View>
   );
