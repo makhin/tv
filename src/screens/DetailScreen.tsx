@@ -130,7 +130,6 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
 const createStyles = (theme: ThemePalette) =>
   StyleSheet.create({
     container: {
