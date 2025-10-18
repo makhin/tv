@@ -199,7 +199,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={ListFooterComponent}
         ListEmptyComponent={ListEmptyComponent}
-        removeClippedSubviews={Platform.isTV}
+        removeClippedSubviews={false}
         maxToRenderPerBatch={10}
         windowSize={Platform.isTV ? 5 : 10}
         initialNumToRender={10}
