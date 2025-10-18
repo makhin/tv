@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Ensure Android Gradle wrapper is executable
+        run: chmod +x android/gradlew
+
       - name: Assemble Android release APK
         run: cd android && ./gradlew assembleRelease
 
