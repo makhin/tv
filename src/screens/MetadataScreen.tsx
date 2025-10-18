@@ -32,7 +32,7 @@ const MetadataScreen: React.FC<Props> = ({ route, navigation }) => {
 
       if (evt.eventType === 'left') {
         console.log('Navigating back to detail screen');
-        navigation.goBack();
+        navigation.navigate('Detail', { photoId, photoIds });
       }
     };
 
@@ -45,7 +45,7 @@ const MetadataScreen: React.FC<Props> = ({ route, navigation }) => {
         console.log('MetadataScreen: TV event listener removed');
       }
     };
-  }, [navigation]);
+  }, [navigation, photoId, photoIds]);
 
   // Находим текущий индекс фото в списке
   const currentIndex = photoIds.indexOf(photoId);
