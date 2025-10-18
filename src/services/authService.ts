@@ -1,12 +1,10 @@
 // src/services/authService.ts
 import { authLogin } from '@/api/generated/auth/auth';
 import { authHelpers } from '@/api/client';
-
-const HARDCODED_EMAIL = 'amakhin@gmail.com';
-const HARDCODED_PASSWORD = 'Omega0))';
+import { authConfig, type AuthCredentials } from '@/config/authConfig';
 
 export const authService = {
-  autoLogin: async (): Promise<boolean> => {
+  autoLogin: async (credentials?: AuthCredentials): Promise<boolean> => {
     try {
       // Проверяем, есть ли уже токен
       const existingToken = await authHelpers.getToken();
@@ -15,12 +13,23 @@ export const authService = {
         return true;
       }
 
-      // Выполняем логин с захардкоженными credentials
+      const resolvedCredentials =
+        credentials ?? authConfig.loadEnvironmentCredentials();
+
+      if (!resolvedCredentials?.email || !resolvedCredentials?.password) {
+        console.warn('Auto-login aborted: credentials are not available');
+        return false;
+      }
+
+      const rememberMe =
+        resolvedCredentials.rememberMe ?? true;
+
+      // Выполняем логин с безопасно полученными credentials
       console.log('Attempting auto-login...');
       const response = await authLogin({
-        email: HARDCODED_EMAIL,
-        password: HARDCODED_PASSWORD,
-        rememberMe: true,
+        email: resolvedCredentials.email,
+        password: resolvedCredentials.password,
+        rememberMe,
       });
       console.log('Response:', response);
 

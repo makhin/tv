@@ -22,6 +22,16 @@ yarn start
 
 With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
 
+## Configure authentication secrets
+
+The application reads API credentials from environment variables so that sensitive data never appears in the repository.
+
+1. Copy `.env.example` to `.env`.
+2. Fill in the `AUTH_EMAIL` and `AUTH_PASSWORD` values with your real credentials.
+3. Optionally adjust `AUTH_REMEMBER_ME` to control whether the backend should persist the session (`true`/`false`/`1`/`0`).
+
+> `.env` files are ignored by Git via `.gitignore`, so your secrets stay local.
+
 ### Android
 
 ```sh
