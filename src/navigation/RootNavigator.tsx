@@ -1,5 +1,5 @@
 // src/navigation/RootNavigator.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
@@ -9,8 +9,7 @@ import DetailScreen from '@/screens/DetailScreen';
 import MetadataScreen from '@/screens/MetadataScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
-import { authConfig } from '@/config/authConfig';
-import { useAppStore } from '@/store/useAppStore';
+import { useAppStore, selectCredentials } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
 
@@ -26,34 +25,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const RootNavigator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
-  const { setPersons, setTags } = useAppStore();
+  const { setPersons, setTags } = useAppStore((state) => ({
+    setPersons: state.setPersons,
+    setTags: state.setTags,
+  }));
+  const credentials = useAppStore(selectCredentials);
 
-  useEffect(() => {
-    initializeApp();
-  }, []);
-
-  const initializeApp = async () => {
-    try {
-      // 1. Авторизация
-      const authSuccess = await authService.autoLogin(
-        authConfig.loadEnvironmentCredentials() ?? undefined
-      );
-      if (!authSuccess) {
-        setAuthError('Не удалось авторизоваться');
-        return;
-      }
-
-      // 2. Загрузка справочников
-      await loadReferenceData();
-    } catch (error) {
-      console.error('App initialization error:', error);
-      setAuthError('Ошибка инициализации');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadReferenceData = async () => {
+  const loadReferenceData = useCallback(async () => {
     try {
       // Загружаем persons и tags параллельно
       const [personsData, tagsData] = await Promise.all([
@@ -70,7 +48,31 @@ export const RootNavigator: React.FC = () => {
       console.error('Error loading reference data:', error);
       // Не блокируем приложение, если не удалось загрузить справочники
     }
-  };
+  }, [setPersons, setTags]);
+
+  const initializeApp = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      // 1. Авторизация
+      const authSuccess = await authService.autoLogin(credentials);
+      if (!authSuccess) {
+        setAuthError('Не удалось авторизоваться');
+        return;
+      }
+
+      // 2. Загрузка справочников
+      await loadReferenceData();
+    } catch (error) {
+      console.error('App initialization error:', error);
+      setAuthError('Ошибка инициализации');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [credentials, loadReferenceData]);
+
+  useEffect(() => {
+    initializeApp();
+  }, [initializeApp]);
 
   if (isLoading) {
     return (
