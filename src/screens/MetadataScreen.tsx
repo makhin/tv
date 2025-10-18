@@ -1,5 +1,5 @@
 // src/screens/MetadataScreen.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,6 +13,7 @@ import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
 import { format } from 'date-fns';
 import { TagBadge } from '@/components/TagBadge';
+import { useThemePalette, type ThemePalette } from '@/config/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Metadata'>;
 
@@ -20,6 +21,8 @@ const MetadataScreen: React.FC<Props> = ({ route, navigation }) => {
   const { photoId, photoIds } = route.params;
 
   const { data: photo, isLoading, isError } = usePhotosGetPhoto(photoId);
+  const theme = useThemePalette();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   // Обработка событий пульта TV - только LEFT для возврата
   useEffect(() => {
@@ -53,7 +56,7 @@ const MetadataScreen: React.FC<Props> = ({ route, navigation }) => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3b82f6" />
+        <ActivityIndicator size="large" color={theme.activityIndicator} />
         <Text style={styles.loadingText}>Загрузка метаданных...</Text>
       </View>
     );
@@ -245,146 +248,149 @@ const MetadataScreen: React.FC<Props> = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111827',
-    padding: Platform.isTV ? 32 : 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: Platform.isTV ? 20 : 16,
-    color: '#9ca3af',
-  },
-  errorContainer: {
-    flex: 1,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: Platform.isTV ? 24 : 18,
-    color: '#ef4444',
-    textAlign: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Platform.isTV ? 24 : 16,
-    paddingBottom: Platform.isTV ? 16 : 12,
-    borderBottomWidth: 2,
-    borderBottomColor: '#374151',
-  },
-  headerText: {
-    fontSize: Platform.isTV ? 28 : 20,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  hint: {
-    fontSize: Platform.isTV ? 16 : 12,
-    color: '#6b7280',
-  },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: Platform.isTV ? 24 : 16,
-  },
-  column: {
-    flex: 1,
-  },
-  section: {
-    marginBottom: Platform.isTV ? 20 : 16,
-    backgroundColor: '#1f2937',
-    padding: Platform.isTV ? 16 : 12,
-    borderRadius: 8,
-  },
-  sectionTitle: {
-    fontSize: Platform.isTV ? 20 : 16,
-    fontWeight: 'bold',
-    color: '#3b82f6',
-    marginBottom: Platform.isTV ? 12 : 8,
-  },
-  row: {
-    flexDirection: 'row',
-    marginBottom: Platform.isTV ? 8 : 6,
-    alignItems: 'flex-start',
-  },
-  label: {
-    fontSize: Platform.isTV ? 15 : 12,
-    color: '#9ca3af',
-    marginRight: 8,
-    minWidth: Platform.isTV ? 140 : 100,
-  },
-  value: {
-    fontSize: Platform.isTV ? 15 : 12,
-    color: '#ffffff',
-    flex: 1,
-  },
-  captionItem: {
-    marginBottom: Platform.isTV ? 10 : 8,
-    paddingBottom: Platform.isTV ? 8 : 6,
-    borderBottomWidth: 1,
-    borderBottomColor: '#374151',
-  },
-  captionText: {
-    fontSize: Platform.isTV ? 14 : 12,
-    color: '#ffffff',
-  },
-  moreText: {
-    fontSize: Platform.isTV ? 12 : 10,
-    color: '#9ca3af',
-    fontStyle: 'italic',
-    marginTop: Platform.isTV ? 8 : 4,
-  },
-  faceItem: {
-    backgroundColor: '#374151',
-    paddingHorizontal: Platform.isTV ? 10 : 8,
-    paddingVertical: Platform.isTV ? 6 : 4,
-    borderRadius: 6,
-    marginBottom: Platform.isTV ? 6 : 4,
-  },
-  faceText: {
-    fontSize: Platform.isTV ? 13 : 11,
-    color: '#ffffff',
-  },
-  scoreContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  scoreValue: {
-    fontSize: Platform.isTV ? 15 : 12,
-    fontWeight: 'bold',
-  },
-  scoreLow: {
-    color: '#10b981',
-  },
-  scoreMedium: {
-    color: '#f59e0b',
-  },
-  scoreHigh: {
-    color: '#ef4444',
-  },
-  scoreIcon: {
-    fontSize: Platform.isTV ? 18 : 14,
-  },
-  badgesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Platform.isTV ? 6 : 4,
-  },
-  noFlags: {
-    fontSize: Platform.isTV ? 14 : 12,
-    color: '#9ca3af',
-    fontStyle: 'italic',
-  },
-});
+const createStyles = (theme: ThemePalette) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+      padding: Platform.isTV ? 32 : 16,
+    },
+    loadingContainer: {
+      flex: 1,
+      backgroundColor: theme.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: Platform.isTV ? 20 : 16,
+      color: theme.textMuted,
+    },
+    errorContainer: {
+      flex: 1,
+      backgroundColor: theme.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+    },
+    errorText: {
+      fontSize: Platform.isTV ? 24 : 18,
+      color: theme.danger,
+      textAlign: 'center',
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: Platform.isTV ? 24 : 16,
+      paddingBottom: Platform.isTV ? 16 : 12,
+      borderBottomWidth: 2,
+      borderBottomColor: theme.borderMuted,
+    },
+    headerText: {
+      fontSize: Platform.isTV ? 28 : 20,
+      fontWeight: 'bold',
+      color: theme.textPrimary,
+    },
+    hint: {
+      fontSize: Platform.isTV ? 16 : 12,
+      color: theme.textMuted,
+    },
+    content: {
+      flex: 1,
+      flexDirection: 'row',
+      gap: Platform.isTV ? 24 : 16,
+    },
+    column: {
+      flex: 1,
+    },
+    section: {
+      marginBottom: Platform.isTV ? 20 : 16,
+      backgroundColor: theme.card,
+      padding: Platform.isTV ? 16 : 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.borderMuted,
+      gap: Platform.isTV ? 12 : 8,
+    },
+    sectionTitle: {
+      fontSize: Platform.isTV ? 20 : 16,
+      fontWeight: 'bold',
+      color: theme.accent,
+    },
+    row: {
+      flexDirection: 'row',
+      marginBottom: Platform.isTV ? 8 : 6,
+      alignItems: 'flex-start',
+      gap: 8,
+    },
+    label: {
+      fontSize: Platform.isTV ? 15 : 12,
+      color: theme.textMuted,
+      minWidth: Platform.isTV ? 140 : 100,
+    },
+    value: {
+      fontSize: Platform.isTV ? 15 : 12,
+      color: theme.textPrimary,
+      flex: 1,
+    },
+    captionItem: {
+      marginBottom: Platform.isTV ? 10 : 8,
+      paddingBottom: Platform.isTV ? 8 : 6,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.borderMuted,
+    },
+    captionText: {
+      fontSize: Platform.isTV ? 14 : 12,
+      color: theme.textSecondary,
+    },
+    moreText: {
+      fontSize: Platform.isTV ? 12 : 10,
+      color: theme.textMuted,
+      fontStyle: 'italic',
+      marginTop: Platform.isTV ? 8 : 4,
+    },
+    faceItem: {
+      backgroundColor: theme.surfaceAlt,
+      paddingHorizontal: Platform.isTV ? 10 : 8,
+      paddingVertical: Platform.isTV ? 6 : 4,
+      borderRadius: 6,
+    },
+    faceText: {
+      fontSize: Platform.isTV ? 13 : 11,
+      color: theme.textSecondary,
+    },
+    scoreContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    scoreValue: {
+      fontSize: Platform.isTV ? 15 : 12,
+      fontWeight: 'bold',
+    },
+    scoreLow: {
+      color: theme.success,
+    },
+    scoreMedium: {
+      color: theme.warning,
+    },
+    scoreHigh: {
+      color: theme.danger,
+    },
+    scoreIcon: {
+      fontSize: Platform.isTV ? 18 : 14,
+    },
+    badgesContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: Platform.isTV ? 6 : 4,
+    },
+    noFlags: {
+      fontSize: Platform.isTV ? 14 : 12,
+      color: theme.textMuted,
+      fontStyle: 'italic',
+    },
+  });
 
 export default MetadataScreen;

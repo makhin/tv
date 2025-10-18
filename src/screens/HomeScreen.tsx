@@ -9,12 +9,15 @@ import { LoadMoreIndicator } from '@/components/LoadMoreIndicator';
 import { useAppStore } from '@/store/useAppStore';
 import { useInfinitePhotos } from '@/hooks/useInfinitePhotos';
 import { mapPhotosToDisplay, type PhotoItemDisplay } from '@/utils/photoHelpers';
+import { useThemePalette, type ThemePalette } from '@/config/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { setFocusedItemId, focusedItemId, persons, tags } = useAppStore();
   const flatListRef = useRef<FlatList>(null);
+  const theme = useThemePalette();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   // Получаем текущую дату для фильтра "Этот день"
   const today = new Date();
@@ -230,83 +233,87 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1e3a5f',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Platform.isTV ? 32 : 16,
-    paddingVertical: Platform.isTV ? 24 : 16,
-    backgroundColor: '#1e3a5f',
-    gap: Platform.isTV ? 24 : 16,
-  },
-  title: {
-    fontSize: Platform.isTV ? 36 : 24,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  headerContent: {
-    flex: 1,
-    gap: Platform.isTV ? 12 : 8,
-  },
-  photoCount: {
-    fontSize: Platform.isTV ? 18 : 14,
-    color: '#d1d5db',
-  },
-  settingsButton: {
-    width: Platform.isTV ? 72 : 44,
-    height: Platform.isTV ? 72 : 44,
-    minWidth: Platform.isTV ? 72 : 44,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    borderRadius: Platform.isTV ? 18 : 12,
-  },
-  settingsButtonText: {
-    fontSize: Platform.isTV ? 36 : 20,
-    lineHeight: Platform.isTV ? 40 : 22,
-  },
-  listContainer: {
-    paddingHorizontal: Platform.isTV ? 32 : 16,
-    paddingBottom: Platform.isTV ? 16 : 8,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-    gap: 16,
-    minHeight: 400,
-  },
-  emptyText: {
-    fontSize: Platform.isTV ? 28 : 18,
-    color: '#9ca3af',
-    textAlign: 'center',
-  },
-  emptySubtext: {
-    fontSize: Platform.isTV ? 20 : 14,
-    color: '#6b7280',
-    textAlign: 'center',
-  },
-  errorText: {
-    fontSize: Platform.isTV ? 28 : 18,
-    color: '#ef4444',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  errorDetail: {
-    fontSize: Platform.isTV ? 18 : 14,
-    color: '#9ca3af',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: Platform.isTV ? 24 : 16,
-    color: '#9ca3af',
-  },
-});
+const createStyles = (theme: ThemePalette) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: Platform.isTV ? 32 : 16,
+      paddingVertical: Platform.isTV ? 24 : 16,
+      backgroundColor: theme.surface,
+      gap: Platform.isTV ? 24 : 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.borderMuted,
+    },
+    title: {
+      fontSize: Platform.isTV ? 36 : 24,
+      fontWeight: 'bold',
+      color: theme.textPrimary,
+    },
+    headerContent: {
+      flex: 1,
+      gap: Platform.isTV ? 12 : 8,
+    },
+    photoCount: {
+      fontSize: Platform.isTV ? 18 : 14,
+      color: theme.textMuted,
+    },
+    settingsButton: {
+      width: Platform.isTV ? 72 : 44,
+      height: Platform.isTV ? 72 : 44,
+      minWidth: Platform.isTV ? 72 : 44,
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+      borderRadius: Platform.isTV ? 18 : 12,
+    },
+    settingsButtonText: {
+      fontSize: Platform.isTV ? 36 : 20,
+      lineHeight: Platform.isTV ? 40 : 22,
+    },
+    listContainer: {
+      paddingHorizontal: Platform.isTV ? 32 : 16,
+      paddingBottom: Platform.isTV ? 16 : 8,
+      backgroundColor: theme.background,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+      gap: 16,
+      minHeight: 400,
+    },
+    emptyText: {
+      fontSize: Platform.isTV ? 28 : 18,
+      color: theme.textMuted,
+      textAlign: 'center',
+    },
+    emptySubtext: {
+      fontSize: Platform.isTV ? 20 : 14,
+      color: theme.textSecondary,
+      textAlign: 'center',
+    },
+    errorText: {
+      fontSize: Platform.isTV ? 28 : 18,
+      color: theme.danger,
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    errorDetail: {
+      fontSize: Platform.isTV ? 18 : 14,
+      color: theme.textMuted,
+      textAlign: 'center',
+      marginBottom: 16,
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: Platform.isTV ? 24 : 16,
+      color: theme.textMuted,
+    },
+  });
 
 export default HomeScreen;

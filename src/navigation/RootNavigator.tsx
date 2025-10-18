@@ -1,6 +1,6 @@
 // src/navigation/RootNavigator.tsx
-import React, { useCallback, useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { DefaultTheme, DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
@@ -9,9 +9,15 @@ import DetailScreen from '@/screens/DetailScreen';
 import MetadataScreen from '@/screens/MetadataScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
-import { useAppStore, selectCredentials } from '@/store/useAppStore';
+import { useAppStore, selectCredentials, selectTheme } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
+import {
+  ThemeProvider,
+  getThemePalette,
+  isDarkTheme,
+  type ThemePalette,
+} from '@/config/theme';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -30,6 +36,24 @@ export const RootNavigator: React.FC = () => {
     setTags: state.setTags,
   }));
   const credentials = useAppStore(selectCredentials);
+  const themeName = useAppStore(selectTheme);
+  const palette = useMemo(() => getThemePalette(themeName), [themeName]);
+  const styles = useMemo(() => createStyles(palette), [palette]);
+  const navigationTheme = useMemo(() => {
+    const baseTheme = isDarkTheme(themeName) ? DarkTheme : DefaultTheme;
+
+    return {
+      ...baseTheme,
+      colors: {
+        ...baseTheme.colors,
+        background: palette.background,
+        card: palette.surface,
+        text: palette.textPrimary,
+        border: palette.border,
+        primary: palette.accent,
+      },
+    };
+  }, [palette, themeName]);
 
   const loadReferenceData = useCallback(async () => {
     try {
@@ -74,71 +98,76 @@ export const RootNavigator: React.FC = () => {
     initializeApp();
   }, [initializeApp]);
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3b82f6" />
-        <Text style={styles.loadingText}>Загрузка...</Text>
-      </View>
-    );
-  }
+  const content = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={palette.activityIndicator} />
+          <Text style={styles.loadingText}>Загрузка...</Text>
+        </View>
+      );
+    }
 
-  if (authError) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{authError}</Text>
-      </View>
-    );
-  }
+    if (authError) {
+      return (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{authError}</Text>
+        </View>
+      );
+    }
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerShown: false,
-          animation: Platform.isTV ? 'fade' : 'default',
-        }}
-      >
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Photobank' }} />
-        <Stack.Screen
-          name="Detail"
-          component={DetailScreen}
-          options={{ title: 'Photo' }}
-        />
-        <Stack.Screen
-          name="Metadata"
-          component={MetadataScreen}
-          options={{ title: 'Photo Metadata' }}
-        />
-        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+    return (
+      <NavigationContainer theme={navigationTheme}>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            headerShown: false,
+            animation: Platform.isTV ? 'fade' : 'default',
+          }}
+        >
+          <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Photobank' }} />
+          <Stack.Screen
+            name="Detail"
+            component={DetailScreen}
+            options={{ title: 'Photo' }}
+          />
+          <Stack.Screen
+            name="Metadata"
+            component={MetadataScreen}
+            options={{ title: 'Photo Metadata' }}
+          />
+          <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  };
+
+  return <ThemeProvider theme={themeName}>{content()}</ThemeProvider>;
 };
 
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: Platform.isTV ? 24 : 16,
-    color: '#9ca3af',
-  },
-  errorContainer: {
-    flex: 1,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: Platform.isTV ? 28 : 18,
-    color: '#ef4444',
-    textAlign: 'center',
-  },
-});
+const createStyles = (theme: ThemePalette) =>
+  StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      backgroundColor: theme.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: Platform.isTV ? 24 : 16,
+      color: theme.textMuted,
+    },
+    errorContainer: {
+      flex: 1,
+      backgroundColor: theme.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+    },
+    errorText: {
+      fontSize: Platform.isTV ? 28 : 18,
+      color: theme.danger,
+      textAlign: 'center',
+    },
+  });

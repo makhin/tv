@@ -1,5 +1,5 @@
 // src/components/FocusableButton.tsx
-import React, { useState, useRef } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import {
   Pressable,
   Text,
@@ -9,6 +9,7 @@ import {
   Platform,
   Animated,
 } from 'react-native';
+import { useThemePalette, type ThemePalette } from '@/config/theme';
 
 interface FocusableButtonProps {
   title: string;
@@ -27,6 +28,8 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const theme = useThemePalette();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -63,33 +66,34 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: Platform.isTV ? 16 : 12,
-    paddingHorizontal: Platform.isTV ? 32 : 24,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: Platform.isTV ? 200 : 120,
-  },
-  buttonFocused: {
-    backgroundColor: '#2563eb',
-    borderWidth: 3,
-    borderColor: '#fff',
-    shadowColor: '#fff',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  text: {
-    color: '#ffffff',
-    fontSize: Platform.isTV ? 24 : 16,
-    fontWeight: '600',
-  },
-  textFocused: {
-    color: '#ffffff',
-    fontWeight: '700',
-  },
-});
+const createStyles = (theme: ThemePalette) =>
+  StyleSheet.create({
+    button: {
+      backgroundColor: theme.buttonBackground,
+      paddingVertical: Platform.isTV ? 16 : 12,
+      paddingHorizontal: Platform.isTV ? 32 : 24,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: Platform.isTV ? 200 : 120,
+    },
+    buttonFocused: {
+      backgroundColor: theme.buttonFocusedBackground,
+      borderWidth: 3,
+      borderColor: theme.buttonFocusedBorder,
+      shadowColor: theme.buttonFocusedShadow,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.8,
+      shadowRadius: 10,
+      elevation: 10,
+    },
+    text: {
+      color: theme.buttonText,
+      fontSize: Platform.isTV ? 24 : 16,
+      fontWeight: '600',
+    },
+    textFocused: {
+      color: theme.buttonFocusedText,
+      fontWeight: '700',
+    },
+  });
