@@ -114,18 +114,19 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const ListHeaderComponent = useMemo(
     () => (
       <View style={styles.header}>
-        <Text style={styles.title}>Фотоархив</Text>
-        <View style={styles.headerButtons}>
+        <FocusableButton
+          title="⚙"
+          onPress={() => navigation.navigate('Settings')}
+          style={styles.settingsButton}
+          textStyle={styles.settingsButtonText}
+        />
+        <View style={styles.headerContent}>
+          <Text style={styles.title}>Фотоархив</Text>
           <Text style={styles.photoCount}>
             {isLoading && photos.length === 0
               ? 'Загрузка...'
               : `Фото: ${photos.length}${totalCount > 0 ? ` из ${totalCount}` : ''}`}
           </Text>
-          <FocusableButton
-            title="Настройки"
-            onPress={() => navigation.navigate('Settings')}
-            style={styles.settingsButton}
-          />
         </View>
       </View>
     ),
@@ -236,28 +237,36 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Platform.isTV ? 32 : 16,
     paddingVertical: Platform.isTV ? 24 : 16,
     backgroundColor: '#1e3a5f',
+    gap: Platform.isTV ? 24 : 16,
   },
   title: {
     fontSize: Platform.isTV ? 36 : 24,
     fontWeight: 'bold',
     color: '#ffffff',
   },
-  headerButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
+  headerContent: {
+    flex: 1,
+    gap: Platform.isTV ? 12 : 8,
   },
   photoCount: {
     fontSize: Platform.isTV ? 18 : 14,
     color: '#d1d5db',
   },
   settingsButton: {
-    minWidth: Platform.isTV ? 150 : 100,
+    width: Platform.isTV ? 72 : 44,
+    height: Platform.isTV ? 72 : 44,
+    minWidth: Platform.isTV ? 72 : 44,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    borderRadius: Platform.isTV ? 18 : 12,
+  },
+  settingsButtonText: {
+    fontSize: Platform.isTV ? 36 : 20,
+    lineHeight: Platform.isTV ? 40 : 22,
   },
   listContainer: {
     paddingHorizontal: Platform.isTV ? 32 : 16,
