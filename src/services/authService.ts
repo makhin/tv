@@ -1,7 +1,7 @@
 // src/services/authService.ts
 import { authLogin } from '@/api/generated/auth/auth';
 import { authHelpers } from '@/api/client';
-import { authConfig, type AuthCredentials } from '@/config/authConfig';
+import type { AuthCredentials } from '@/config/authConfig';
 import { useAppStore, selectCredentials, type CredentialsState } from '@/store/useAppStore';
 
 export type AutoLoginResult =
@@ -46,10 +46,7 @@ export const authService = {
 
       const providedCredentials = normalizeCredentials(credentials);
 
-      const resolvedCredentials =
-        storedCredentials ??
-        providedCredentials ??
-        normalizeCredentials(authConfig.loadEnvironmentCredentials());
+      const resolvedCredentials = storedCredentials ?? providedCredentials;
 
       if (!resolvedCredentials?.email || !resolvedCredentials?.password) {
         console.warn('Auto-login aborted: credentials are not available');

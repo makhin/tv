@@ -16,7 +16,7 @@ import DetailScreen from '@/screens/DetailScreen';
 import MetadataScreen from '@/screens/MetadataScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
-import { useAppStore, selectCredentials } from '@/store/useAppStore';
+import { useAppStore } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
 

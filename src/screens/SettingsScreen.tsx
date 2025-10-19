@@ -5,6 +5,9 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { FocusableButton } from '@/components/FocusableButton';
 import { useAppStore } from '@/store/useAppStore';
+import { authService } from '@/services/authService';
+import { personsGetAll } from '@/api/generated/persons/persons';
+import { getTags } from '@/api/generated/tags/tags';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
@@ -14,9 +17,12 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
   const storedUsername = useAppStore((state) => state.credentials.username);
   const storedPassword = useAppStore((state) => state.credentials.password);
   const persistCredentials = useAppStore((state) => state.setCredentials);
+  const setPersons = useAppStore((state) => state.setPersons);
+  const setTags = useAppStore((state) => state.setTags);
 
   const [username, setUsername] = useState(storedUsername);
   const [password, setPassword] = useState(storedPassword);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setUsername(storedUsername);
@@ -27,7 +33,7 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  const handleSaveCredentials = () => {
+  const handleSaveCredentials = async () => {
     const normalizedUsername = username.trim();
     if (!normalizedUsername) {
       Alert.alert('Ошибка', 'Имя пользователя не может быть пустым.');
@@ -39,12 +45,47 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    persistCredentials({
-      username: normalizedUsername,
-      password,
-    });
+    setIsLoading(true);
 
-    Alert.alert('Успех', 'Учетные данные сохранены.');
+    try {
+      // Сохраняем credentials в store
+      persistCredentials({
+        username: normalizedUsername,
+        password,
+      });
+
+      // Пытаемся залогиниться
+      const authResult = await authService.autoLogin({
+        username: normalizedUsername,
+        password,
+      });
+
+      if (authResult.status === 'success') {
+        // Загружаем справочники
+        try {
+          const [personsData, tagsData] = await Promise.all([
+            personsGetAll(),
+            getTags(),
+          ]);
+          setPersons(personsData);
+          setTags(tagsData);
+        } catch (error) {
+          console.error('Error loading reference data:', error);
+        }
+
+        // Переходим на главный экран
+        navigation.replace('Home');
+      } else {
+        const message =
+          authResult.message ?? 'Не удалось авторизоваться. Проверьте учетные данные.';
+        Alert.alert('Ошибка авторизации', message);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      Alert.alert('Ошибка', 'Произошла ошибка при авторизации.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -93,7 +134,11 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
             />
           </View>
           <View style={styles.buttonSpacing}>
-            <FocusableButton title="Сохранить" onPress={handleSaveCredentials} />
+            <FocusableButton
+              title={isLoading ? 'Вход...' : 'Сохранить'}
+              onPress={handleSaveCredentials}
+              disabled={isLoading}
+            />
           </View>
         </View>
       </View>

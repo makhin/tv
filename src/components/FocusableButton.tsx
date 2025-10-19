@@ -14,6 +14,7 @@ interface FocusableButtonProps {
   title: string;
   onPress: () => void;
   hasTVPreferredFocus?: boolean;
+  disabled?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -22,6 +23,7 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
   title,
   onPress,
   hasTVPreferredFocus = false,
+  disabled = false,
   style,
   textStyle,
 }) => {
@@ -51,13 +53,28 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
   return (
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
       <Pressable
-        style={[styles.button, isFocused && styles.buttonFocused, style]}
-        onPress={onPress}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        style={[
+          styles.button,
+          isFocused && styles.buttonFocused,
+          disabled && styles.buttonDisabled,
+          style,
+        ]}
+        onPress={disabled ? undefined : onPress}
+        onFocus={disabled ? undefined : handleFocus}
+        onBlur={disabled ? undefined : handleBlur}
         hasTVPreferredFocus={hasTVPreferredFocus}
+        disabled={disabled}
       >
-        <Text style={[styles.text, isFocused && styles.textFocused, textStyle]}>{title}</Text>
+        <Text
+          style={[
+            styles.text,
+            isFocused && styles.textFocused,
+            disabled && styles.textDisabled,
+            textStyle,
+          ]}
+        >
+          {title}
+        </Text>
       </Pressable>
     </Animated.View>
   );
@@ -83,6 +100,10 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 10,
   },
+  buttonDisabled: {
+    backgroundColor: '#6b7280',
+    opacity: 0.5,
+  },
   text: {
     color: '#ffffff',
     fontSize: Platform.isTV ? 24 : 16,
@@ -91,5 +112,8 @@ const styles = StyleSheet.create({
   textFocused: {
     color: '#ffffff',
     fontWeight: '700',
+  },
+  textDisabled: {
+    color: '#d1d5db',
   },
 });
