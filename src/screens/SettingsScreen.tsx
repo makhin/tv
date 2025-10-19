@@ -8,7 +8,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { authService } from '@/services/authService';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
-import { styles } from './SettingsScreen.styles';
+import { settingsScreenStyles as styles, colors } from '@/styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
@@ -115,7 +115,7 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
               value={username}
               onChangeText={setUsername}
               placeholder="Введите имя пользователя"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={colors.textMuted}
               autoCapitalize="none"
             />
           </View>
@@ -127,7 +127,7 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
               value={password}
               onChangeText={setPassword}
               placeholder="Введите пароль"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={colors.textMuted}
               secureTextEntry
             />
           </View>

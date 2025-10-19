@@ -1,7 +1,7 @@
 // src/components/FocusableButton.tsx
 import React, { useState, useRef } from 'react';
 import { Pressable, Text, ViewStyle, TextStyle, Animated } from 'react-native';
-import { styles } from './FocusableButton.styles';
+import { focusableButtonStyles as styles } from '@/styles';
 
 interface FocusableButtonProps {
   title: string;

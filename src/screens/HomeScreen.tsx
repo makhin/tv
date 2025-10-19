@@ -9,7 +9,7 @@ import { LoadMoreIndicator } from '@/components/LoadMoreIndicator';
 import { useAppStore } from '@/store/useAppStore';
 import { useInfinitePhotos } from '@/hooks/useInfinitePhotos';
 import { mapPhotosToDisplay, type PhotoItemDisplay } from '@/utils/photoHelpers';
-import { styles } from './HomeScreen.styles';
+import { homeScreenStyles as styles } from '@/styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 

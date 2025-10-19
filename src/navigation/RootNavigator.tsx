@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Platform, View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { Platform, View, Text, ActivityIndicator, Alert } from 'react-native';
 
 import HomeScreen from '@/screens/HomeScreen';
 import DetailScreen from '@/screens/DetailScreen';
@@ -12,6 +12,7 @@ import { authService } from '@/services/authService';
 import { useAppStore } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
+import { rootNavigatorStyles as styles, colors } from '@/styles';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -101,7 +102,7 @@ export const RootNavigator: React.FC = () => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3b82f6" />
+        <ActivityIndicator size="large" color={colors.accentPrimary} />
         <Text style={styles.loadingText}>Загрузка...</Text>
       </View>
     );
@@ -136,29 +137,3 @@ export const RootNavigator: React.FC = () => {
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: Platform.isTV ? 24 : 16,
-    color: '#9ca3af',
-  },
-  errorContainer: {
-    flex: 1,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: Platform.isTV ? 28 : 18,
-    color: '#ef4444',
-    textAlign: 'center',
-  },
-});
