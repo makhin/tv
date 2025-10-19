@@ -8,6 +8,7 @@ import {
   Platform,
   TVEventHandler as TVEventHandlerClass,
 } from 'react-native';
+import { CommonActions } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
@@ -31,8 +32,24 @@ const MetadataScreen: React.FC<Props> = ({ route, navigation }) => {
       console.log('MetadataScreen TV Event received:', evt.eventType);
 
       if (evt.eventType === 'left') {
-        console.log('Navigating back to detail screen');
-        navigation.navigate('Detail', { photoId, photoIds });
+        console.log('Returning to detail screen');
+
+        navigation.dispatch((state) => {
+          const targetRoute = state.routes.find((route) => route.name === 'Detail');
+
+          if (!targetRoute) {
+            return null;
+          }
+
+          return CommonActions.setParams({
+            params: { photoId, photoIds },
+            source: targetRoute.key,
+          });
+        });
+
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
       }
     };
 
