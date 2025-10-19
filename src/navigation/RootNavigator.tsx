@@ -1,6 +1,6 @@
 // src/navigation/RootNavigator.tsx
-import React, { useCallback, useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform, View, Text, ActivityIndicator, Alert } from 'react-native';
 
@@ -12,7 +12,7 @@ import { authService } from '@/services/authService';
 import { useAppStore } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
-import { appStyles, colors } from '@/styles';
+import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -31,6 +31,24 @@ export const RootNavigator: React.FC = () => {
   const setTags = useAppStore((state) => state.setTags);
   const username = useAppStore((state) => state.credentials.username);
   const password = useAppStore((state) => state.credentials.password);
+  const { styles: appStyles, colors, theme } = useThemedStyles();
+
+  const navigationTheme = useMemo(() => {
+    const baseTheme = theme === 'dark' ? DarkTheme : DefaultTheme;
+
+    return {
+      ...baseTheme,
+      colors: {
+        ...baseTheme.colors,
+        background: colors.background,
+        card: colors.backgroundMuted,
+        primary: colors.accentPrimary,
+        text: colors.textPrimary,
+        border: colors.borderMuted,
+        notification: colors.accentStrong,
+      },
+    };
+  }, [theme, colors]);
 
   const loadReferenceData = useCallback(async () => {
     try {
@@ -117,7 +135,7 @@ export const RootNavigator: React.FC = () => {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator
         initialRouteName={initialRouteName}
         screenOptions={{

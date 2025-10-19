@@ -13,12 +13,13 @@ import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
 import { format } from 'date-fns';
 import { TagBadge } from '@/components/TagBadge';
-import { appStyles, colors } from '@/styles';
+import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Metadata'>;
 
 const MetadataScreen: React.FC<Props> = ({ route, navigation }) => {
   const { photoId, photoIds } = route.params;
+  const { styles: appStyles, colors } = useThemedStyles();
 
   const { data: photo, isLoading, isError } = usePhotosGetPhoto(photoId);
 
