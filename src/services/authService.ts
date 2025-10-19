@@ -4,6 +4,11 @@ import { authHelpers } from '@/api/client';
 import { authConfig, type AuthCredentials } from '@/config/authConfig';
 import { useAppStore, selectCredentials, type CredentialsState } from '@/store/useAppStore';
 
+export type AutoLoginResult =
+  | { status: 'success'; source: 'token' | 'credentials' }
+  | { status: 'missing-credentials' }
+  | { status: 'failure'; message?: string };
+
 type AutoLoginInput = Partial<AuthCredentials> & Partial<CredentialsState>;
 
 const normalizeCredentials = (
@@ -28,13 +33,13 @@ const normalizeCredentials = (
 };
 
 export const authService = {
-  autoLogin: async (credentials?: AutoLoginInput): Promise<boolean> => {
+  autoLogin: async (credentials?: AutoLoginInput): Promise<AutoLoginResult> => {
     try {
       // Проверяем, есть ли уже токен
       const existingToken = await authHelpers.getToken();
       if (existingToken) {
         console.log('Token already exists, skipping login');
-        return true;
+        return { status: 'success', source: 'token' };
       }
 
       const storedCredentials = normalizeCredentials(
@@ -50,7 +55,7 @@ export const authService = {
 
       if (!resolvedCredentials?.email || !resolvedCredentials?.password) {
         console.warn('Auto-login aborted: credentials are not available');
-        return false;
+        return { status: 'missing-credentials' };
       }
 
       const rememberMe =
@@ -69,14 +74,20 @@ export const authService = {
       if (response?.token) {
         await authHelpers.saveToken(response.token);
         console.log('Auto-login successful');
-        return true;
+        return { status: 'success', source: 'credentials' };
       }
 
       console.error('Login response did not contain token', response);
-      return false;
+      return {
+        status: 'failure',
+        message: 'Не удалось получить токен авторизации',
+      };
     } catch (error) {
       console.error('Auto-login failed:', error);
-      return false;
+      return {
+        status: 'failure',
+        message: error instanceof Error ? error.message : 'Auto-login failed',
+      };
     }
   },
 

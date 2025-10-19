@@ -2,7 +2,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Platform, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  Platform,
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 
 import HomeScreen from '@/screens/HomeScreen';
 import DetailScreen from '@/screens/DetailScreen';
@@ -25,6 +32,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const RootNavigator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [initialRouteName, setInitialRouteName] =
+    useState<keyof RootStackParamList>('Home');
   const { setPersons, setTags } = useAppStore((state) => ({
     setPersons: state.setPersons,
     setTags: state.setTags,
@@ -53,15 +62,43 @@ export const RootNavigator: React.FC = () => {
   const initializeApp = useCallback(async () => {
     try {
       setIsLoading(true);
-      // 1. Авторизация
-      const authSuccess = await authService.autoLogin(credentials);
-      if (!authSuccess) {
-        setAuthError('Не удалось авторизоваться');
+      setAuthError(null);
+
+      const normalizedUsername = credentials?.username?.trim();
+      const normalizedPassword = credentials?.password?.trim();
+      const hasStoredCredentials = Boolean(normalizedUsername && normalizedPassword);
+
+      const alreadyAuthenticated = await authService.isAuthenticated();
+
+      if (!hasStoredCredentials && !alreadyAuthenticated) {
+        setInitialRouteName('Settings');
         return;
       }
 
-      // 2. Загрузка справочников
-      await loadReferenceData();
+      if (alreadyAuthenticated) {
+        setInitialRouteName('Home');
+        await loadReferenceData();
+        return;
+      }
+
+      // 1. Авторизация
+      const authResult = await authService.autoLogin(credentials);
+
+      if (authResult.status === 'success') {
+        setInitialRouteName('Home');
+        await loadReferenceData();
+        return;
+      }
+
+      if (authResult.status === 'missing-credentials') {
+        setInitialRouteName('Settings');
+        return;
+      }
+
+      setInitialRouteName('Settings');
+      const message =
+        authResult.message ?? 'Не удалось авторизоваться. Проверьте учетные данные.';
+      Alert.alert('Ошибка авторизации', message);
     } catch (error) {
       console.error('App initialization error:', error);
       setAuthError('Ошибка инициализации');
@@ -94,7 +131,7 @@ export const RootNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName={initialRouteName}
         screenOptions={{
           headerShown: false,
           animation: Platform.isTV ? 'fade' : 'default',
