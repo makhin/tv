@@ -60,6 +60,18 @@ export const typography = {
 
 const isTV = Platform.isTV;
 
+type SpacingKey = keyof typeof spacing;
+type FontSizeKey = keyof typeof typography.fontSize;
+
+const responsiveSpacing = (tv: SpacingKey, other: SpacingKey) =>
+  isTV ? spacing[tv] : spacing[other];
+
+const responsiveFontSize = (tv: FontSizeKey, other: FontSizeKey) =>
+  isTV ? typography.fontSize[tv] : typography.fontSize[other];
+
+const responsiveValue = <T>(tvValue: T, otherValue: T): T =>
+  isTV ? tvValue : otherValue;
+
 const baseFlexFill = {
   flex: 1,
 };
@@ -125,55 +137,55 @@ export const layoutStyles = StyleSheet.create({
 
 export const gapStyles = StyleSheet.create({
   sm: {
-    gap: isTV ? spacing.md : spacing.sm,
+    gap: responsiveSpacing('md', 'sm'),
   },
   md: {
-    gap: isTV ? spacing.lg : spacing.md,
+    gap: responsiveSpacing('lg', 'md'),
   },
   lg: {
-    gap: isTV ? spacing.xxxl : spacing.xl,
+    gap: responsiveSpacing('xxxl', 'xl'),
   },
 });
 
 export const insetStyles = StyleSheet.create({
   screenPadding: {
-    padding: isTV ? spacing.jumbo : spacing.xl,
+    padding: responsiveSpacing('jumbo', 'xl'),
   },
   screenHorizontal: {
-    paddingHorizontal: isTV ? spacing.jumbo : spacing.xl,
+    paddingHorizontal: responsiveSpacing('jumbo', 'xl'),
   },
   headerVertical: {
-    paddingVertical: isTV ? spacing.xxxl : spacing.xl,
+    paddingVertical: responsiveSpacing('xxxl', 'xl'),
   },
   headerHorizontal: {
-    paddingHorizontal: isTV ? spacing.jumbo : spacing.xl,
+    paddingHorizontal: responsiveSpacing('jumbo', 'xl'),
   },
   listContent: {
-    paddingHorizontal: isTV ? spacing.jumbo : spacing.xl,
-    paddingBottom: isTV ? spacing.xl : spacing.md,
+    paddingHorizontal: responsiveSpacing('jumbo', 'xl'),
+    paddingBottom: responsiveSpacing('xl', 'md'),
   },
   sectionPadding: {
-    padding: isTV ? spacing.xxl : spacing.lg,
+    padding: responsiveSpacing('xxl', 'lg'),
   },
   cardPadding: {
-    padding: isTV ? spacing.xxl : spacing.lg,
+    padding: responsiveSpacing('xxl', 'lg'),
   },
   inputPadding: {
-    paddingVertical: isTV ? spacing.xxl : spacing.lg,
-    paddingHorizontal: isTV ? 13 : 9,
+    paddingVertical: responsiveSpacing('xxl', 'lg'),
+    paddingHorizontal: responsiveValue(13, 9),
   },
   paddingSm: {
-    paddingHorizontal: isTV ? spacing.lg : spacing.md,
-    paddingVertical: isTV ? spacing.md : spacing.sm,
+    paddingHorizontal: responsiveSpacing('lg', 'md'),
+    paddingVertical: responsiveSpacing('md', 'sm'),
   },
   marginBottomLg: {
-    marginBottom: isTV ? spacing.xxxl : spacing.xl,
+    marginBottom: responsiveSpacing('xxxl', 'xl'),
   },
   marginBottomMd: {
-    marginBottom: isTV ? spacing.xxl : spacing.lg,
+    marginBottom: responsiveSpacing('xxl', 'lg'),
   },
   marginBottomSm: {
-    marginBottom: isTV ? spacing.lg : spacing.md,
+    marginBottom: responsiveSpacing('lg', 'md'),
   },
   marginTopSm: {
     marginTop: spacing.md,
@@ -218,55 +230,55 @@ export const surfaceStyles = StyleSheet.create({
 
 export const textStyles = StyleSheet.create({
   headingHero: {
-    fontSize: isTV ? typography.fontSize.mega : typography.fontSize.display,
+    fontSize: responsiveFontSize('mega', 'display'),
     fontWeight: typography.weight.bold,
     color: colors.textPrimary,
   },
   headingDisplay: {
-    fontSize: isTV ? typography.fontSize.display : typography.fontSize.xxl,
+    fontSize: responsiveFontSize('display', 'xxl'),
     fontWeight: typography.weight.bold,
     color: colors.textPrimary,
   },
   headingSection: {
-    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.lg,
+    fontSize: responsiveFontSize('xxl', 'lg'),
     fontWeight: typography.weight.bold,
     color: colors.accentPrimary,
   },
   headingPrimary: {
-    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    fontSize: responsiveFontSize('xxl', 'xl'),
     fontWeight: typography.weight.bold,
     color: colors.textPrimary,
   },
   headingMuted: {
-    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    fontSize: responsiveFontSize('xxl', 'xl'),
     color: colors.textMuted,
   },
   bodyPrimary: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.md,
+    fontSize: responsiveFontSize('xl', 'md'),
     color: colors.textPrimary,
   },
   bodySecondary: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
     color: colors.textSecondary,
   },
   bodyMuted: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
     color: colors.textMuted,
   },
   bodySubtle: {
-    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    fontSize: responsiveFontSize('lg', 'sm'),
     color: colors.textSubtle,
   },
   caption: {
-    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    fontSize: responsiveFontSize('lg', 'sm'),
     color: colors.textPrimary,
   },
   captionMuted: {
-    fontSize: isTV ? typography.fontSize.sm : typography.fontSize.xs,
+    fontSize: responsiveFontSize('sm', 'xs'),
     color: colors.textMuted,
   },
   badge: {
-    fontSize: isTV ? typography.fontSize.sm : typography.fontSize.xs,
+    fontSize: responsiveFontSize('sm', 'xs'),
     fontWeight: typography.weight.medium,
   },
   badgeTag: {
@@ -277,22 +289,22 @@ export const textStyles = StyleSheet.create({
   },
   status: {
     marginTop: spacing.xl,
-    fontSize: isTV ? typography.fontSize.display : typography.fontSize.lg,
+    fontSize: responsiveFontSize('display', 'lg'),
     color: colors.textMuted,
     textAlign: 'center' as const,
   },
   statusSmall: {
-    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    fontSize: responsiveFontSize('xxl', 'xl'),
     color: colors.textMuted,
     textAlign: 'center' as const,
   },
   error: {
-    fontSize: isTV ? typography.fontSize.hero : typography.fontSize.xxl,
+    fontSize: responsiveFontSize('hero', 'xxl'),
     color: colors.danger,
     textAlign: 'center' as const,
   },
   errorDetail: {
-    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    fontSize: responsiveFontSize('xxl', 'xl'),
     color: colors.textMuted,
     textAlign: 'center' as const,
     marginBottom: spacing.xxxl,
@@ -311,12 +323,12 @@ export const textStyles = StyleSheet.create({
 export const buttonStyles = StyleSheet.create({
   base: {
     backgroundColor: colors.accentPrimary,
-    paddingVertical: isTV ? spacing.xxl : spacing.lg,
-    paddingHorizontal: isTV ? spacing.jumbo : spacing.xxxl,
+    paddingVertical: responsiveSpacing('xxl', 'lg'),
+    paddingHorizontal: responsiveSpacing('jumbo', 'xxxl'),
     borderRadius: spacing.xl,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    minWidth: isTV ? 200 : 120,
+    minWidth: responsiveValue(200, 120),
   },
   focused: {
     backgroundColor: colors.accentStrong,
@@ -334,7 +346,7 @@ export const buttonStyles = StyleSheet.create({
   },
   text: {
     color: colors.textPrimary,
-    fontSize: isTV ? typography.fontSize.display : typography.fontSize.lg,
+    fontSize: responsiveFontSize('display', 'lg'),
     fontWeight: typography.weight.semibold,
   },
   textFocused: {
@@ -345,16 +357,16 @@ export const buttonStyles = StyleSheet.create({
     color: colors.textMuted,
   },
   iconSquare: {
-    width: isTV ? 72 : 44,
-    height: isTV ? 72 : 44,
-    minWidth: isTV ? 72 : 44,
+    width: responsiveValue(72, 44),
+    height: responsiveValue(72, 44),
+    minWidth: responsiveValue(72, 44),
     paddingVertical: 0,
     paddingHorizontal: 0,
-    borderRadius: isTV ? 18 : 12,
+    borderRadius: responsiveValue(18, 12),
   },
   iconText: {
-    fontSize: isTV ? typography.fontSize.mega : typography.fontSize.display,
-    lineHeight: isTV ? 40 : 22,
+    fontSize: responsiveFontSize('mega', 'display'),
+    lineHeight: responsiveValue(40, 22),
   },
 });
 
@@ -364,9 +376,9 @@ export const listStyles = StyleSheet.create({
     alignItems: 'flex-start' as const,
     backgroundColor: colors.borderMuted,
     borderRadius: spacing.xl,
-    padding: isTV ? spacing.xxl : spacing.lg,
-    marginBottom: isTV ? spacing.xxl : spacing.lg,
-    minHeight: isTV ? 90 : 80,
+    padding: responsiveSpacing('xxl', 'lg'),
+    marginBottom: responsiveSpacing('xxl', 'lg'),
+    minHeight: responsiveValue(90, 80),
   },
   itemFocused: {
     backgroundColor: colors.accentMuted,
@@ -380,7 +392,7 @@ export const listStyles = StyleSheet.create({
     transform: [{ scale: 1.02 }],
   },
   thumbnailContainer: {
-    marginRight: isTV ? spacing.xxxl : spacing.xl,
+    marginRight: responsiveSpacing('xxxl', 'xl'),
     position: 'relative' as const,
   },
   thumbnail: {
@@ -396,7 +408,7 @@ export const listStyles = StyleSheet.create({
   },
   placeholderText: {
     color: colors.placeholderText,
-    fontSize: isTV ? typography.fontSize.display : typography.fontSize.xxl,
+    fontSize: responsiveFontSize('display', 'xxl'),
     fontWeight: typography.weight.bold,
   },
   nsfwBadge: {
@@ -427,7 +439,7 @@ export const listStyles = StyleSheet.create({
     gap: spacing.xl,
   },
   rowText: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
     color: colors.textMuted,
   },
   rowTextFocused: {
@@ -438,7 +450,7 @@ export const listStyles = StyleSheet.create({
     color: colors.textSecondary,
   },
   separator: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
     color: colors.textSubtle,
   },
   badgesContainer: {
@@ -450,11 +462,11 @@ export const listStyles = StyleSheet.create({
 
 export const badgeStyles = StyleSheet.create({
   base: {
-    paddingHorizontal: isTV ? spacing.lg : spacing.md,
-    paddingVertical: isTV ? spacing.md : spacing.sm,
+    paddingHorizontal: responsiveSpacing('lg', 'md'),
+    paddingVertical: responsiveSpacing('md', 'sm'),
     borderRadius: spacing.lg,
-    marginRight: isTV ? spacing.md : spacing.sm,
-    marginBottom: isTV ? spacing.md : spacing.sm,
+    marginRight: responsiveSpacing('md', 'sm'),
+    marginBottom: responsiveSpacing('md', 'sm'),
   },
   tag: {
     backgroundColor: colors.badgeTagBackground,
@@ -468,19 +480,19 @@ export const feedbackStyles = StyleSheet.create({
   block: {
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    gap: isTV ? spacing.xxxl : spacing.xl,
-    paddingVertical: isTV ? spacing.jumbo : spacing.xxxl,
+    gap: responsiveSpacing('xxxl', 'xl'),
+    paddingVertical: responsiveSpacing('jumbo', 'xxxl'),
   },
   emptyState: {
     minHeight: 400,
   },
   loaderText: {
-    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    fontSize: responsiveFontSize('xxl', 'xl'),
     color: colors.textMuted,
     textAlign: 'center' as const,
   },
   completeIcon: {
-    fontSize: isTV ? typography.fontSize.hero : typography.fontSize.display,
+    fontSize: responsiveFontSize('hero', 'display'),
     color: colors.success,
   },
 });
@@ -490,69 +502,69 @@ export const sectionStyles = StyleSheet.create({
     flexDirection: 'row' as const,
     justifyContent: 'space-between' as const,
     alignItems: 'center' as const,
-    paddingBottom: isTV ? spacing.xl : spacing.lg,
+    paddingBottom: responsiveSpacing('xl', 'lg'),
     borderBottomWidth: 2,
     borderBottomColor: colors.borderMuted,
   },
   container: {
     backgroundColor: colors.backgroundMuted,
     borderRadius: spacing.xl,
-    padding: isTV ? spacing.xxl : spacing.lg,
-    marginBottom: isTV ? spacing.xxxl : spacing.xl,
+    padding: responsiveSpacing('xxl', 'lg'),
+    marginBottom: responsiveSpacing('xxxl', 'xl'),
   },
   row: {
     flexDirection: 'row' as const,
     alignItems: 'flex-start' as const,
-    marginBottom: isTV ? spacing.lg : spacing.md,
+    marginBottom: responsiveSpacing('lg', 'md'),
   },
 });
 
 export const infoStyles = StyleSheet.create({
   label: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
     color: colors.textMuted,
     marginRight: spacing.md,
-    minWidth: isTV ? 140 : 100,
+    minWidth: responsiveValue(140, 100),
   },
   value: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
     color: colors.textPrimary,
     flex: 1,
   },
   captionItem: {
-    marginBottom: isTV ? spacing.xl : spacing.lg,
-    paddingBottom: isTV ? spacing.lg : spacing.md,
+    marginBottom: responsiveSpacing('xl', 'lg'),
+    paddingBottom: responsiveSpacing('lg', 'md'),
     borderBottomWidth: 1,
     borderBottomColor: colors.borderMuted,
   },
   captionText: {
-    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    fontSize: responsiveFontSize('lg', 'sm'),
     color: colors.textPrimary,
   },
   moreText: {
-    fontSize: isTV ? typography.fontSize.sm : typography.fontSize.xs,
+    fontSize: responsiveFontSize('sm', 'xs'),
     color: colors.textMuted,
     fontStyle: 'italic',
-    marginTop: isTV ? spacing.xl : spacing.md,
+    marginTop: responsiveSpacing('xl', 'md'),
   },
   faceItem: {
     backgroundColor: colors.borderMuted,
-    paddingHorizontal: isTV ? spacing.lg : spacing.md,
-    paddingVertical: isTV ? spacing.md : spacing.sm,
+    paddingHorizontal: responsiveSpacing('lg', 'md'),
+    paddingVertical: responsiveSpacing('md', 'sm'),
     borderRadius: spacing.lg,
-    marginBottom: isTV ? spacing.md : spacing.sm,
+    marginBottom: responsiveSpacing('md', 'sm'),
   },
   faceText: {
-    fontSize: isTV ? typography.fontSize.md : typography.fontSize.xs,
+    fontSize: responsiveFontSize('md', 'xs'),
     color: colors.textPrimary,
   },
   badgesContainer: {
     flexDirection: 'row' as const,
     flexWrap: 'wrap' as const,
-    gap: isTV ? spacing.lg : spacing.md,
+    gap: responsiveSpacing('lg', 'md'),
   },
   noFlags: {
-    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    fontSize: responsiveFontSize('lg', 'sm'),
     color: colors.textMuted,
     fontStyle: 'italic',
   },
@@ -560,16 +572,16 @@ export const infoStyles = StyleSheet.create({
 
 export const formStyles = StyleSheet.create({
   infoText: {
-    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    fontSize: responsiveFontSize('lg', 'sm'),
     color: colors.textSubtle,
-    lineHeight: isTV ? 21 : 15,
+    lineHeight: responsiveValue(21, 15),
     marginBottom: spacing.sm,
   },
   group: {
-    marginBottom: isTV ? spacing.xxl : spacing.xl,
+    marginBottom: responsiveSpacing('xxl', 'xl'),
   },
   label: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
     color: colors.textSecondary,
     marginBottom: spacing.sm,
   },
@@ -578,10 +590,10 @@ export const formStyles = StyleSheet.create({
     borderRadius: spacing.lg - 4,
     borderWidth: 1,
     borderColor: colors.borderMuted,
-    paddingVertical: isTV ? spacing.xxl : spacing.lg,
-    paddingHorizontal: isTV ? 13 : 9,
+    paddingVertical: responsiveSpacing('xxl', 'lg'),
+    paddingHorizontal: responsiveValue(13, 9),
     color: colors.textPrimary,
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
   },
 });
 
@@ -592,7 +604,7 @@ export const scoreStyles = StyleSheet.create({
     gap: spacing.md,
   },
   value: {
-    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: responsiveFontSize('xl', 'sm'),
     fontWeight: typography.weight.bold,
   },
   low: {
@@ -605,7 +617,7 @@ export const scoreStyles = StyleSheet.create({
     color: colors.danger,
   },
   icon: {
-    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.lg,
+    fontSize: responsiveFontSize('xxl', 'lg'),
   },
 });
 
@@ -618,16 +630,16 @@ export const mediaStyles = StyleSheet.create({
   },
   counter: {
     position: 'absolute' as const,
-    bottom: isTV ? 40 : 20,
+    bottom: responsiveValue(40, 20),
     alignSelf: 'center' as const,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingHorizontal: isTV ? spacing.jumbo : spacing.xxxl,
-    paddingVertical: isTV ? spacing.xxl : spacing.lg,
+    paddingHorizontal: responsiveSpacing('jumbo', 'xxxl'),
+    paddingVertical: responsiveSpacing('xxl', 'lg'),
     borderRadius: spacing.xl,
   },
   counterText: {
     color: colors.textPrimary,
-    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    fontSize: responsiveFontSize('xxl', 'xl'),
     fontWeight: typography.weight.semibold,
   },
 });
