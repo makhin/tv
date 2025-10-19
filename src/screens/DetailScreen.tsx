@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
 import { useAppStore } from '@/store/useAppStore';
-import { styles } from './DetailScreen.styles';
+import { detailScreenStyles as styles, colors } from '@/styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
@@ -86,7 +86,7 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3b82f6" />
+        <ActivityIndicator size="large" color={colors.accentPrimary} />
         <Text style={styles.loadingText}>Загрузка фото...</Text>
       </View>
     );

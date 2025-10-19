@@ -7,7 +7,7 @@ import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
 import { format } from 'date-fns';
 import { TagBadge } from '@/components/TagBadge';
-import { styles } from './MetadataScreen.styles';
+import { metadataScreenStyles as styles, colors } from '@/styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Metadata'>;
 
@@ -64,7 +64,7 @@ const MetadataScreen: React.FC<Props> = ({ route, navigation }) => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3b82f6" />
+        <ActivityIndicator size="large" color={colors.accentPrimary} />
         <Text style={styles.loadingText}>Загрузка метаданных...</Text>
       </View>
     );

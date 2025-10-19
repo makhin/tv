@@ -1,8 +1,9 @@
 // src/components/PhotoListItem.tsx
 import React, { useState } from 'react';
-import { Pressable, Text, Image, StyleSheet, View, Platform } from 'react-native';
+import { Pressable, Text, Image, View } from 'react-native';
 import { format, parseISO } from 'date-fns';
 import { TagBadge } from './TagBadge';
+import { photoListItemStyles as styles } from '@/styles';
 
 interface PhotoListItemProps {
   thumbnailUrl?: string | null;
@@ -146,90 +147,3 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: '#374151',
-    borderRadius: 8,
-    padding: Platform.isTV ? 12 : 8,
-    marginBottom: Platform.isTV ? 12 : 8,
-    minHeight: Platform.isTV ? 90 : 80,
-  },
-  containerFocused: {
-    backgroundColor: '#4b5563',
-    borderWidth: 3,
-    borderColor: '#3b82f6',
-    shadowColor: '#3b82f6',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
-    elevation: 10,
-    transform: [{ scale: 1.02 }],
-  },
-  thumbnailContainer: {
-    marginRight: Platform.isTV ? 16 : 12,
-    position: 'relative',
-  },
-  thumbnail: {
-    width: 50,
-    height: 50,
-    borderRadius: 4,
-    backgroundColor: '#1f2937',
-  },
-  thumbnailPlaceholder: {
-    backgroundColor: '#1f2937',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderText: {
-    color: '#6b7280',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  nsfwBadge: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    backgroundColor: '#ef4444',
-    borderRadius: 4,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-  },
-  nsfwText: {
-    color: '#ffffff',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    gap: 4,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  rowText: {
-    fontSize: Platform.isTV ? 14 : 12,
-    color: '#9ca3af',
-  },
-  rowTextFocused: {
-    color: '#d1d5db',
-  },
-  nameText: {
-    fontWeight: '600',
-    color: '#e5e7eb',
-  },
-  separator: {
-    fontSize: Platform.isTV ? 14 : 12,
-    color: '#6b7280',
-  },
-  badgesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-  },
-});
