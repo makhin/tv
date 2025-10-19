@@ -16,7 +16,7 @@ import DetailScreen from '@/screens/DetailScreen';
 import MetadataScreen from '@/screens/MetadataScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
-import { useAppStore } from '@/store/useAppStore';
+import { useAppStore, selectCredentials } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
 
@@ -34,10 +34,11 @@ export const RootNavigator: React.FC = () => {
   const [authError, setAuthError] = useState<string | null>(null);
   const [initialRouteName, setInitialRouteName] =
     useState<keyof RootStackParamList>('Home');
-  const setPersons = useAppStore((state) => state.setPersons);
-  const setTags = useAppStore((state) => state.setTags);
-  const username = useAppStore((state) => state.credentials.username);
-  const password = useAppStore((state) => state.credentials.password);
+  const { setPersons, setTags } = useAppStore((state) => ({
+    setPersons: state.setPersons,
+    setTags: state.setTags,
+  }));
+  const credentials = useAppStore(selectCredentials);
 
   const loadReferenceData = useCallback(async () => {
     try {
@@ -63,8 +64,8 @@ export const RootNavigator: React.FC = () => {
       setIsLoading(true);
       setAuthError(null);
 
-      const normalizedUsername = username?.trim();
-      const normalizedPassword = password?.trim();
+      const normalizedUsername = credentials?.username?.trim();
+      const normalizedPassword = credentials?.password?.trim();
       const hasStoredCredentials = Boolean(normalizedUsername && normalizedPassword);
 
       const alreadyAuthenticated = await authService.isAuthenticated();
@@ -81,7 +82,7 @@ export const RootNavigator: React.FC = () => {
       }
 
       // 1. Авторизация
-      const authResult = await authService.autoLogin({ username, password });
+      const authResult = await authService.autoLogin(credentials);
 
       if (authResult.status === 'success') {
         setInitialRouteName('Home');
@@ -104,7 +105,7 @@ export const RootNavigator: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [username, password, loadReferenceData]);
+  }, [credentials, loadReferenceData]);
 
   useEffect(() => {
     initializeApp();

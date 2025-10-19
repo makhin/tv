@@ -1,7 +1,7 @@
 // src/services/authService.ts
 import { authLogin } from '@/api/generated/auth/auth';
 import { authHelpers } from '@/api/client';
-import type { AuthCredentials } from '@/config/authConfig';
+import { authConfig, type AuthCredentials } from '@/config/authConfig';
 import { useAppStore, selectCredentials, type CredentialsState } from '@/store/useAppStore';
 
 export type AutoLoginResult =
@@ -42,18 +42,24 @@ export const authService = {
         return { status: 'success', source: 'token' };
       }
 
-      const storedCredentials = normalizeCredentials(selectCredentials(useAppStore.getState()));
+      const storedCredentials = normalizeCredentials(
+        selectCredentials(useAppStore.getState())
+      );
 
       const providedCredentials = normalizeCredentials(credentials);
 
-      const resolvedCredentials = storedCredentials ?? providedCredentials;
+      const resolvedCredentials =
+        storedCredentials ??
+        providedCredentials ??
+        normalizeCredentials(authConfig.loadEnvironmentCredentials());
 
       if (!resolvedCredentials?.email || !resolvedCredentials?.password) {
         console.warn('Auto-login aborted: credentials are not available');
         return { status: 'missing-credentials' };
       }
 
-      const rememberMe = resolvedCredentials.rememberMe ?? true;
+      const rememberMe =
+        resolvedCredentials.rememberMe ?? true;
 
       // Выполняем логин с безопасно полученными credentials
       console.log('Attempting auto-login...');
