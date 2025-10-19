@@ -1,6 +1,6 @@
 // src/screens/SettingsScreen.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Platform, TextInput, Alert } from 'react-native';
+import { View, Text, TextInput, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { FocusableButton } from '@/components/FocusableButton';
@@ -8,6 +8,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { authService } from '@/services/authService';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
+import { styles } from './SettingsScreen.styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
@@ -142,54 +143,5 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111827',
-  },
-  content: {
-    padding: Platform.isTV ? 21 : 11,
-  },
-  section: {
-    backgroundColor: '#1f2937',
-    padding: Platform.isTV ? 16 : 11,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: Platform.isTV ? 19 : 13,
-    fontWeight: '600',
-    color: '#ffffff',
-    marginBottom: 11,
-  },
-  infoText: {
-    fontSize: Platform.isTV ? 13 : 9,
-    color: '#e5e7eb',
-    lineHeight: Platform.isTV ? 21 : 15,
-    marginBottom: 5,
-  },
-  buttonSpacing: {
-    marginTop: 8,
-  },
-  inputGroup: {
-    marginBottom: 11,
-  },
-  label: {
-    fontSize: Platform.isTV ? 15 : 11,
-    color: '#e5e7eb',
-    marginBottom: 5,
-  },
-  input: {
-    backgroundColor: '#111827',
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#374151',
-    paddingVertical: Platform.isTV ? 11 : 8,
-    paddingHorizontal: Platform.isTV ? 13 : 9,
-    color: '#ffffff',
-    fontSize: Platform.isTV ? 15 : 11,
-  },
-});
 
 export default SettingsScreen;
