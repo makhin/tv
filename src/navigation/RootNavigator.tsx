@@ -1,15 +1,22 @@
 // src/navigation/RootNavigator.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Platform, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  Platform,
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 
 import HomeScreen from '@/screens/HomeScreen';
 import DetailScreen from '@/screens/DetailScreen';
 import MetadataScreen from '@/screens/MetadataScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
-import { useAppStore } from '@/store/useAppStore';
+import { useAppStore, selectCredentials } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
 
@@ -25,32 +32,15 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const RootNavigator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
-  const { setPersons, setTags } = useAppStore();
+  const [initialRouteName, setInitialRouteName] =
+    useState<keyof RootStackParamList>('Home');
+  const { setPersons, setTags } = useAppStore((state) => ({
+    setPersons: state.setPersons,
+    setTags: state.setTags,
+  }));
+  const credentials = useAppStore(selectCredentials);
 
-  useEffect(() => {
-    initializeApp();
-  }, []);
-
-  const initializeApp = async () => {
-    try {
-      // 1. Авторизация
-      const authSuccess = await authService.autoLogin();
-      if (!authSuccess) {
-        setAuthError('Не удалось авторизоваться');
-        return;
-      }
-
-      // 2. Загрузка справочников
-      await loadReferenceData();
-    } catch (error) {
-      console.error('App initialization error:', error);
-      setAuthError('Ошибка инициализации');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadReferenceData = async () => {
+  const loadReferenceData = useCallback(async () => {
     try {
       // Загружаем persons и tags параллельно
       const [personsData, tagsData] = await Promise.all([
@@ -67,7 +57,59 @@ export const RootNavigator: React.FC = () => {
       console.error('Error loading reference data:', error);
       // Не блокируем приложение, если не удалось загрузить справочники
     }
-  };
+  }, [setPersons, setTags]);
+
+  const initializeApp = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setAuthError(null);
+
+      const normalizedUsername = credentials?.username?.trim();
+      const normalizedPassword = credentials?.password?.trim();
+      const hasStoredCredentials = Boolean(normalizedUsername && normalizedPassword);
+
+      const alreadyAuthenticated = await authService.isAuthenticated();
+
+      if (!hasStoredCredentials && !alreadyAuthenticated) {
+        setInitialRouteName('Settings');
+        return;
+      }
+
+      if (alreadyAuthenticated) {
+        setInitialRouteName('Home');
+        await loadReferenceData();
+        return;
+      }
+
+      // 1. Авторизация
+      const authResult = await authService.autoLogin(credentials);
+
+      if (authResult.status === 'success') {
+        setInitialRouteName('Home');
+        await loadReferenceData();
+        return;
+      }
+
+      if (authResult.status === 'missing-credentials') {
+        setInitialRouteName('Settings');
+        return;
+      }
+
+      setInitialRouteName('Settings');
+      const message =
+        authResult.message ?? 'Не удалось авторизоваться. Проверьте учетные данные.';
+      Alert.alert('Ошибка авторизации', message);
+    } catch (error) {
+      console.error('App initialization error:', error);
+      setAuthError('Ошибка инициализации');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [credentials, loadReferenceData]);
+
+  useEffect(() => {
+    initializeApp();
+  }, [initializeApp]);
 
   if (isLoading) {
     return (
@@ -89,7 +131,7 @@ export const RootNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName={initialRouteName}
         screenOptions={{
           headerShown: false,
           animation: Platform.isTV ? 'fade' : 'default',
