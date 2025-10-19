@@ -12,7 +12,7 @@ import { authService } from '@/services/authService';
 import { useAppStore } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
-import { rootNavigatorStyles as styles, colors } from '@/styles';
+import { appStyles, colors } from '@/styles';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -101,17 +101,17 @@ export const RootNavigator: React.FC = () => {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={appStyles.layout.centeredScreen}>
         <ActivityIndicator size="large" color={colors.accentPrimary} />
-        <Text style={styles.loadingText}>Загрузка...</Text>
+        <Text style={appStyles.text.status}>Загрузка...</Text>
       </View>
     );
   }
 
   if (authError) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{authError}</Text>
+      <View style={[appStyles.layout.centeredScreen, appStyles.insets.sectionPadding]}>
+        <Text style={appStyles.text.error}>{authError}</Text>
       </View>
     );
   }

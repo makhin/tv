@@ -58,348 +58,267 @@ export const typography = {
   },
 };
 
-const sharedStyleDefinitions = {
-  screenContainer: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  centeredContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  statusText: {
-    marginTop: spacing.xl,
-    fontSize: Platform.isTV ? typography.fontSize.display : typography.fontSize.lg,
-    color: colors.textMuted,
-    textAlign: 'center' as const,
-  },
-  buttonBase: {
-    backgroundColor: colors.accentPrimary,
-    paddingVertical: Platform.isTV ? spacing.xxl : spacing.lg,
-    paddingHorizontal: Platform.isTV ? spacing.jumbo : spacing.xxxl,
-    borderRadius: spacing.xl,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    minWidth: Platform.isTV ? 200 : 120,
-  },
+const isTV = Platform.isTV;
+
+const baseFlexFill = {
+  flex: 1,
 };
 
-export const sharedStyles = StyleSheet.create(sharedStyleDefinitions);
+const baseCentered = {
+  justifyContent: 'center' as const,
+  alignItems: 'center' as const,
+};
 
-const { width: detailWidth, height: detailHeight } = Dimensions.get('window');
-
-export const homeScreenStyles = StyleSheet.create({
-  container: {
-    ...sharedStyleDefinitions.screenContainer,
+export const layoutStyles = StyleSheet.create({
+  screen: {
+    ...baseFlexFill,
+    backgroundColor: colors.background,
+  },
+  screenBrand: {
+    ...baseFlexFill,
     backgroundColor: colors.backgroundBrand,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Platform.isTV ? spacing.jumbo : spacing.xl,
-    paddingVertical: Platform.isTV ? spacing.xxxl : spacing.xl,
-    backgroundColor: colors.backgroundBrand,
-    gap: Platform.isTV ? spacing.xxxl : spacing.xl,
-  },
-  title: {
-    fontSize: Platform.isTV ? typography.fontSize.mega : typography.fontSize.display,
-    fontWeight: typography.weight.bold,
-    color: colors.textPrimary,
-  },
-  headerContent: {
-    flex: 1,
-    gap: Platform.isTV ? spacing.lg : spacing.md,
-  },
-  photoCount: {
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.xl,
-    color: colors.textMuted,
-  },
-  settingsButton: {
-    width: Platform.isTV ? 72 : 44,
-    height: Platform.isTV ? 72 : 44,
-    minWidth: Platform.isTV ? 72 : 44,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    borderRadius: Platform.isTV ? 18 : 12,
-  },
-  settingsButtonText: {
-    fontSize: Platform.isTV ? typography.fontSize.mega : typography.fontSize.display,
-    lineHeight: Platform.isTV ? 40 : 22,
-  },
-  listContainer: {
-    paddingHorizontal: Platform.isTV ? spacing.jumbo : spacing.xl,
-    paddingBottom: Platform.isTV ? spacing.xl : spacing.md,
-  },
-  emptyContainer: {
-    ...sharedStyleDefinitions.centeredContent,
-    padding: spacing.xxxl,
-    gap: spacing.xxxl,
-    minHeight: 400,
-  },
-  emptyText: {
-    fontSize: Platform.isTV ? typography.fontSize.hero : typography.fontSize.xxl,
-    color: colors.textMuted,
-    textAlign: 'center',
-  },
-  emptySubtext: {
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.xl,
-    color: colors.textSubtle,
-    textAlign: 'center',
-  },
-  errorText: {
-    fontSize: Platform.isTV ? typography.fontSize.hero : typography.fontSize.xxl,
-    color: colors.danger,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  errorDetail: {
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.xl,
-    color: colors.textMuted,
-    textAlign: 'center',
-    marginBottom: spacing.xxxl,
-  },
-  loadingText: {
-    marginTop: spacing.xl,
-    fontSize: Platform.isTV ? typography.fontSize.display : typography.fontSize.lg,
-    color: colors.textMuted,
-  },
-});
-
-export const detailScreenStyles = StyleSheet.create({
-  container: {
-    ...sharedStyleDefinitions.centeredContent,
+  screenOverlay: {
+    ...baseFlexFill,
     backgroundColor: colors.backgroundOverlay,
   },
-  loadingContainer: {
-    ...sharedStyleDefinitions.centeredContent,
+  centeredScreen: {
+    ...baseFlexFill,
+    ...baseCentered,
+    backgroundColor: colors.background,
+  },
+  centeredOverlay: {
+    ...baseFlexFill,
+    ...baseCentered,
     backgroundColor: colors.backgroundOverlay,
   },
-  loadingText: {
-    ...sharedStyleDefinitions.statusText,
-  },
-  errorContainer: {
-    ...sharedStyleDefinitions.centeredContent,
-    backgroundColor: colors.backgroundOverlay,
-    padding: spacing.xxxl,
-  },
-  errorText: {
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.xl,
-    color: colors.danger,
-    textAlign: 'center',
-  },
-  image: {
-    width: detailWidth,
-    height: detailHeight,
-  },
-  photoCounter: {
-    position: 'absolute',
-    bottom: Platform.isTV ? 40 : 20,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingHorizontal: Platform.isTV ? spacing.jumbo : spacing.xxxl,
-    paddingVertical: Platform.isTV ? spacing.xxl : spacing.lg,
-    borderRadius: spacing.xl,
-  },
-  photoCounterText: {
-    color: colors.textPrimary,
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.xl,
-    fontWeight: typography.weight.semibold,
-  },
-});
-
-export const metadataScreenStyles = StyleSheet.create({
-  container: {
-    ...sharedStyleDefinitions.screenContainer,
-    backgroundColor: colors.background,
-    padding: Platform.isTV ? spacing.jumbo : spacing.xl,
-  },
-  loadingContainer: {
-    ...sharedStyleDefinitions.centeredContent,
-    backgroundColor: colors.background,
-  },
-  loadingText: {
-    ...sharedStyleDefinitions.statusText,
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.lg,
-  },
-  errorContainer: {
-    ...sharedStyleDefinitions.centeredContent,
-    backgroundColor: colors.background,
-    padding: spacing.xxxl,
-  },
-  errorText: {
-    fontSize: Platform.isTV ? typography.fontSize.hero : typography.fontSize.xxl,
-    color: colors.danger,
-    textAlign: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Platform.isTV ? spacing.xxxl : spacing.xl,
-    paddingBottom: Platform.isTV ? spacing.xl : spacing.lg,
-    borderBottomWidth: 2,
-    borderBottomColor: colors.borderMuted,
-  },
-  headerText: {
-    fontSize: Platform.isTV ? typography.fontSize.hero : typography.fontSize.display,
-    fontWeight: typography.weight.bold,
-    color: colors.textPrimary,
-  },
-  hint: {
-    fontSize: Platform.isTV ? typography.fontSize.lg : typography.fontSize.sm,
-    color: colors.textSubtle,
-  },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: Platform.isTV ? spacing.xxxl : spacing.xl,
-  },
-  column: {
-    flex: 1,
-  },
-  section: {
-    marginBottom: Platform.isTV ? spacing.xxl : spacing.xl,
-    backgroundColor: colors.backgroundMuted,
-    padding: Platform.isTV ? spacing.xxl : spacing.lg,
-    borderRadius: spacing.xl,
-  },
-  sectionTitle: {
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.lg,
-    fontWeight: typography.weight.bold,
-    color: colors.accentPrimary,
-    marginBottom: Platform.isTV ? spacing.xl : spacing.lg,
+  centered: {
+    ...baseFlexFill,
+    ...baseCentered,
   },
   row: {
-    flexDirection: 'row',
-    marginBottom: Platform.isTV ? spacing.lg : spacing.md,
-    alignItems: 'flex-start',
+    flexDirection: 'row' as const,
   },
-  label: {
-    fontSize: Platform.isTV ? typography.fontSize.xl : typography.fontSize.sm,
-    color: colors.textMuted,
-    marginRight: spacing.md,
-    minWidth: Platform.isTV ? 140 : 100,
+  rowAlignCenter: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
   },
-  value: {
-    fontSize: Platform.isTV ? typography.fontSize.xl : typography.fontSize.sm,
-    color: colors.textPrimary,
-    flex: 1,
+  rowBetween: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'space-between' as const,
   },
-  captionItem: {
-    marginBottom: Platform.isTV ? spacing.xl : spacing.lg,
-    paddingBottom: Platform.isTV ? spacing.lg : spacing.md,
+  column: {
+    flexDirection: 'column' as const,
+  },
+  columnFlex: {
+    ...baseFlexFill,
+    flexDirection: 'column' as const,
+  },
+  wrap: {
+    flexWrap: 'wrap' as const,
+  },
+  flex1: {
+    ...baseFlexFill,
+  },
+});
+
+export const gapStyles = StyleSheet.create({
+  sm: {
+    gap: isTV ? spacing.md : spacing.sm,
+  },
+  md: {
+    gap: isTV ? spacing.lg : spacing.md,
+  },
+  lg: {
+    gap: isTV ? spacing.xxxl : spacing.xl,
+  },
+});
+
+export const insetStyles = StyleSheet.create({
+  screenPadding: {
+    padding: isTV ? spacing.jumbo : spacing.xl,
+  },
+  screenHorizontal: {
+    paddingHorizontal: isTV ? spacing.jumbo : spacing.xl,
+  },
+  headerVertical: {
+    paddingVertical: isTV ? spacing.xxxl : spacing.xl,
+  },
+  headerHorizontal: {
+    paddingHorizontal: isTV ? spacing.jumbo : spacing.xl,
+  },
+  listContent: {
+    paddingHorizontal: isTV ? spacing.jumbo : spacing.xl,
+    paddingBottom: isTV ? spacing.xl : spacing.md,
+  },
+  sectionPadding: {
+    padding: isTV ? spacing.xxl : spacing.lg,
+  },
+  cardPadding: {
+    padding: isTV ? spacing.xxl : spacing.lg,
+  },
+  inputPadding: {
+    paddingVertical: isTV ? spacing.xxl : spacing.lg,
+    paddingHorizontal: isTV ? 13 : 9,
+  },
+  paddingSm: {
+    paddingHorizontal: isTV ? spacing.lg : spacing.md,
+    paddingVertical: isTV ? spacing.md : spacing.sm,
+  },
+  marginBottomLg: {
+    marginBottom: isTV ? spacing.xxxl : spacing.xl,
+  },
+  marginBottomMd: {
+    marginBottom: isTV ? spacing.xxl : spacing.lg,
+  },
+  marginBottomSm: {
+    marginBottom: isTV ? spacing.lg : spacing.md,
+  },
+  marginTopSm: {
+    marginTop: spacing.md,
+  },
+});
+
+export const surfaceStyles = StyleSheet.create({
+  default: {
+    backgroundColor: colors.background,
+  },
+  brand: {
+    backgroundColor: colors.backgroundBrand,
+  },
+  muted: {
+    backgroundColor: colors.backgroundMuted,
+  },
+  neutral: {
+    backgroundColor: colors.borderMuted,
+  },
+  overlay: {
+    backgroundColor: colors.backgroundOverlay,
+  },
+  card: {
+    backgroundColor: colors.backgroundMuted,
+    borderRadius: spacing.xl,
+  },
+  pill: {
+    borderRadius: spacing.lg,
+  },
+  rounded: {
+    borderRadius: spacing.xl,
+  },
+  borderBottom: {
     borderBottomWidth: 1,
     borderBottomColor: colors.borderMuted,
   },
-  captionText: {
-    fontSize: Platform.isTV ? typography.fontSize.lg : typography.fontSize.sm,
-    color: colors.textPrimary,
-  },
-  moreText: {
-    fontSize: Platform.isTV ? typography.fontSize.sm : typography.fontSize.xs,
-    color: colors.textMuted,
-    fontStyle: 'italic',
-    marginTop: Platform.isTV ? spacing.xl : spacing.md,
-  },
-  faceItem: {
-    backgroundColor: colors.borderMuted,
-    paddingHorizontal: Platform.isTV ? spacing.lg : spacing.md,
-    paddingVertical: Platform.isTV ? spacing.md : spacing.sm,
-    borderRadius: spacing.lg,
-    marginBottom: Platform.isTV ? spacing.md : spacing.sm,
-  },
-  faceText: {
-    fontSize: Platform.isTV ? typography.fontSize.md : typography.fontSize.xs,
-    color: colors.textPrimary,
-  },
-  scoreContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  scoreValue: {
-    fontSize: Platform.isTV ? typography.fontSize.xl : typography.fontSize.sm,
-    fontWeight: typography.weight.bold,
-  },
-  scoreLow: {
-    color: colors.success,
-  },
-  scoreMedium: {
-    color: colors.warning,
-  },
-  scoreHigh: {
-    color: colors.danger,
-  },
-  scoreIcon: {
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.lg,
-  },
-  badgesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Platform.isTV ? spacing.lg : spacing.md,
-  },
-  noFlags: {
-    fontSize: Platform.isTV ? typography.fontSize.lg : typography.fontSize.sm,
-    color: colors.textMuted,
-    fontStyle: 'italic',
+  borderBottomStrong: {
+    borderBottomWidth: 2,
+    borderBottomColor: colors.borderMuted,
   },
 });
 
-export const settingsScreenStyles = StyleSheet.create({
-  container: {
-    ...sharedStyleDefinitions.screenContainer,
-    backgroundColor: colors.background,
+export const textStyles = StyleSheet.create({
+  headingHero: {
+    fontSize: isTV ? typography.fontSize.mega : typography.fontSize.display,
+    fontWeight: typography.weight.bold,
+    color: colors.textPrimary,
   },
-  content: {
-    padding: Platform.isTV ? 21 : 11,
+  headingDisplay: {
+    fontSize: isTV ? typography.fontSize.display : typography.fontSize.xxl,
+    fontWeight: typography.weight.bold,
+    color: colors.textPrimary,
   },
-  section: {
-    backgroundColor: colors.backgroundMuted,
-    padding: Platform.isTV ? spacing.xxl : 11,
-    borderRadius: spacing.xl,
+  headingSection: {
+    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.lg,
+    fontWeight: typography.weight.bold,
+    color: colors.accentPrimary,
+  },
+  headingPrimary: {
+    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    fontWeight: typography.weight.bold,
+    color: colors.textPrimary,
+  },
+  headingMuted: {
+    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    color: colors.textMuted,
+  },
+  bodyPrimary: {
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.md,
+    color: colors.textPrimary,
+  },
+  bodySecondary: {
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    color: colors.textSecondary,
+  },
+  bodyMuted: {
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    color: colors.textMuted,
+  },
+  bodySubtle: {
+    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    color: colors.textSubtle,
+  },
+  caption: {
+    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    color: colors.textPrimary,
+  },
+  captionMuted: {
+    fontSize: isTV ? typography.fontSize.sm : typography.fontSize.xs,
+    color: colors.textMuted,
+  },
+  badge: {
+    fontSize: isTV ? typography.fontSize.sm : typography.fontSize.xs,
+    fontWeight: typography.weight.medium,
+  },
+  badgeTag: {
+    color: colors.badgeTagText,
+  },
+  badgePerson: {
+    color: colors.badgePersonText,
+  },
+  status: {
+    marginTop: spacing.xl,
+    fontSize: isTV ? typography.fontSize.display : typography.fontSize.lg,
+    color: colors.textMuted,
+    textAlign: 'center' as const,
+  },
+  statusSmall: {
+    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    color: colors.textMuted,
+    textAlign: 'center' as const,
+  },
+  error: {
+    fontSize: isTV ? typography.fontSize.hero : typography.fontSize.xxl,
+    color: colors.danger,
+    textAlign: 'center' as const,
+  },
+  errorDetail: {
+    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    color: colors.textMuted,
+    textAlign: 'center' as const,
     marginBottom: spacing.xxxl,
   },
-  sectionTitle: {
-    fontSize: Platform.isTV ? 19 : 13,
-    fontWeight: typography.weight.semibold,
-    color: colors.textPrimary,
-    marginBottom: 11,
+  italic: {
+    fontStyle: 'italic',
   },
-  infoText: {
-    fontSize: Platform.isTV ? 13 : 9,
-    color: colors.textSecondary,
-    lineHeight: Platform.isTV ? 21 : 15,
-    marginBottom: 5,
+  strong: {
+    fontWeight: typography.weight.bold,
   },
-  buttonSpacing: {
-    marginTop: spacing.md,
-  },
-  inputGroup: {
-    marginBottom: 11,
-  },
-  label: {
-    fontSize: Platform.isTV ? 15 : 11,
-    color: colors.textSecondary,
-    marginBottom: 5,
-  },
-  input: {
-    backgroundColor: colors.background,
-    borderRadius: spacing.lg - 4,
-    borderWidth: 1,
-    borderColor: colors.borderMuted,
-    paddingVertical: Platform.isTV ? spacing.xxl : spacing.lg,
-    paddingHorizontal: Platform.isTV ? 13 : 9,
-    color: colors.textPrimary,
-    fontSize: Platform.isTV ? 15 : 11,
+  center: {
+    textAlign: 'center' as const,
   },
 });
 
-export const focusableButtonStyles = StyleSheet.create({
-  button: {
-    ...sharedStyleDefinitions.buttonBase,
+export const buttonStyles = StyleSheet.create({
+  base: {
+    backgroundColor: colors.accentPrimary,
+    paddingVertical: isTV ? spacing.xxl : spacing.lg,
+    paddingHorizontal: isTV ? spacing.jumbo : spacing.xxxl,
+    borderRadius: spacing.xl,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    minWidth: isTV ? 200 : 120,
   },
-  buttonFocused: {
+  focused: {
     backgroundColor: colors.accentStrong,
     borderWidth: 3,
     borderColor: colors.focusBorder,
@@ -409,13 +328,13 @@ export const focusableButtonStyles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 10,
   },
-  buttonDisabled: {
+  disabled: {
     backgroundColor: colors.textSubtle,
     opacity: 0.5,
   },
   text: {
     color: colors.textPrimary,
-    fontSize: Platform.isTV ? typography.fontSize.display : typography.fontSize.lg,
+    fontSize: isTV ? typography.fontSize.display : typography.fontSize.lg,
     fontWeight: typography.weight.semibold,
   },
   textFocused: {
@@ -425,19 +344,31 @@ export const focusableButtonStyles = StyleSheet.create({
   textDisabled: {
     color: colors.textMuted,
   },
+  iconSquare: {
+    width: isTV ? 72 : 44,
+    height: isTV ? 72 : 44,
+    minWidth: isTV ? 72 : 44,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    borderRadius: isTV ? 18 : 12,
+  },
+  iconText: {
+    fontSize: isTV ? typography.fontSize.mega : typography.fontSize.display,
+    lineHeight: isTV ? 40 : 22,
+  },
 });
 
-export const photoListItemStyles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+export const listStyles = StyleSheet.create({
+  itemContainer: {
+    flexDirection: 'row' as const,
+    alignItems: 'flex-start' as const,
     backgroundColor: colors.borderMuted,
     borderRadius: spacing.xl,
-    padding: Platform.isTV ? spacing.xxl : spacing.lg,
-    marginBottom: Platform.isTV ? spacing.xxl : spacing.lg,
-    minHeight: Platform.isTV ? 90 : 80,
+    padding: isTV ? spacing.xxl : spacing.lg,
+    marginBottom: isTV ? spacing.xxl : spacing.lg,
+    minHeight: isTV ? 90 : 80,
   },
-  containerFocused: {
+  itemFocused: {
     backgroundColor: colors.accentMuted,
     borderWidth: 3,
     borderColor: colors.focusHighlight,
@@ -449,8 +380,8 @@ export const photoListItemStyles = StyleSheet.create({
     transform: [{ scale: 1.02 }],
   },
   thumbnailContainer: {
-    marginRight: Platform.isTV ? spacing.xxxl : spacing.xl,
-    position: 'relative',
+    marginRight: isTV ? spacing.xxxl : spacing.xl,
+    position: 'relative' as const,
   },
   thumbnail: {
     width: 50,
@@ -460,16 +391,16 @@ export const photoListItemStyles = StyleSheet.create({
   },
   thumbnailPlaceholder: {
     backgroundColor: colors.placeholderBackground,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
   },
   placeholderText: {
     color: colors.placeholderText,
-    fontSize: Platform.isTV ? typography.fontSize.display : typography.fontSize.xxl,
+    fontSize: isTV ? typography.fontSize.display : typography.fontSize.xxl,
     fontWeight: typography.weight.bold,
   },
   nsfwBadge: {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     right: 0,
     backgroundColor: colors.danger,
@@ -484,17 +415,19 @@ export const photoListItemStyles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start' as const,
+  },
+  contentGap: {
     gap: spacing.lg / 3,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    flexWrap: 'wrap' as const,
     gap: spacing.xl,
   },
   rowText: {
-    fontSize: Platform.isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
     color: colors.textMuted,
   },
   rowTextFocused: {
@@ -505,76 +438,213 @@ export const photoListItemStyles = StyleSheet.create({
     color: colors.textSecondary,
   },
   separator: {
-    fontSize: Platform.isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
     color: colors.textSubtle,
   },
   badgesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
+    flexDirection: 'row' as const,
+    flexWrap: 'wrap' as const,
+    alignItems: 'center' as const,
   },
 });
 
-export const loadMoreIndicatorStyles = StyleSheet.create({
-  container: {
-    paddingVertical: Platform.isTV ? spacing.jumbo : spacing.xxxl,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xl,
+export const badgeStyles = StyleSheet.create({
+  base: {
+    paddingHorizontal: isTV ? spacing.lg : spacing.md,
+    paddingVertical: isTV ? spacing.md : spacing.sm,
+    borderRadius: spacing.lg,
+    marginRight: isTV ? spacing.md : spacing.sm,
+    marginBottom: isTV ? spacing.md : spacing.sm,
   },
-  text: {
-    fontSize: Platform.isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+  tag: {
+    backgroundColor: colors.badgeTagBackground,
+  },
+  person: {
+    backgroundColor: colors.badgePersonBackground,
+  },
+});
+
+export const feedbackStyles = StyleSheet.create({
+  block: {
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    gap: isTV ? spacing.xxxl : spacing.xl,
+    paddingVertical: isTV ? spacing.jumbo : spacing.xxxl,
+  },
+  emptyState: {
+    minHeight: 400,
+  },
+  loaderText: {
+    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
     color: colors.textMuted,
-    textAlign: 'center',
+    textAlign: 'center' as const,
   },
   completeIcon: {
-    fontSize: Platform.isTV ? typography.fontSize.hero : typography.fontSize.display,
+    fontSize: isTV ? typography.fontSize.hero : typography.fontSize.display,
     color: colors.success,
   },
 });
 
-export const tagBadgeStyles = StyleSheet.create({
-  badge: {
-    paddingHorizontal: Platform.isTV ? spacing.lg : spacing.md,
-    paddingVertical: Platform.isTV ? spacing.md : spacing.sm,
-    borderRadius: spacing.lg,
-    marginRight: Platform.isTV ? spacing.md : spacing.sm,
-    marginBottom: Platform.isTV ? spacing.md : spacing.sm,
+export const sectionStyles = StyleSheet.create({
+  header: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    paddingBottom: isTV ? spacing.xl : spacing.lg,
+    borderBottomWidth: 2,
+    borderBottomColor: colors.borderMuted,
   },
-  badgeTag: {
-    backgroundColor: colors.badgeTagBackground,
+  container: {
+    backgroundColor: colors.backgroundMuted,
+    borderRadius: spacing.xl,
+    padding: isTV ? spacing.xxl : spacing.lg,
+    marginBottom: isTV ? spacing.xxxl : spacing.xl,
   },
-  badgePerson: {
-    backgroundColor: colors.badgePersonBackground,
-  },
-  text: {
-    fontSize: Platform.isTV ? typography.fontSize.sm : typography.fontSize.xs,
-    fontWeight: typography.weight.medium,
-  },
-  textTag: {
-    color: colors.badgeTagText,
-  },
-  textPerson: {
-    color: colors.badgePersonText,
+  row: {
+    flexDirection: 'row' as const,
+    alignItems: 'flex-start' as const,
+    marginBottom: isTV ? spacing.lg : spacing.md,
   },
 });
 
-export const rootNavigatorStyles = StyleSheet.create({
-  loadingContainer: {
-    ...sharedStyleDefinitions.centeredContent,
-    backgroundColor: colors.background,
+export const infoStyles = StyleSheet.create({
+  label: {
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    color: colors.textMuted,
+    marginRight: spacing.md,
+    minWidth: isTV ? 140 : 100,
   },
-  loadingText: {
-    ...sharedStyleDefinitions.statusText,
+  value: {
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    color: colors.textPrimary,
+    flex: 1,
   },
-  errorContainer: {
-    ...sharedStyleDefinitions.centeredContent,
-    backgroundColor: colors.background,
-    padding: spacing.xxxl,
+  captionItem: {
+    marginBottom: isTV ? spacing.xl : spacing.lg,
+    paddingBottom: isTV ? spacing.lg : spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderMuted,
   },
-  errorText: {
-    fontSize: Platform.isTV ? typography.fontSize.hero : typography.fontSize.xxl,
-    color: colors.danger,
-    textAlign: 'center',
+  captionText: {
+    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    color: colors.textPrimary,
+  },
+  moreText: {
+    fontSize: isTV ? typography.fontSize.sm : typography.fontSize.xs,
+    color: colors.textMuted,
+    fontStyle: 'italic',
+    marginTop: isTV ? spacing.xl : spacing.md,
+  },
+  faceItem: {
+    backgroundColor: colors.borderMuted,
+    paddingHorizontal: isTV ? spacing.lg : spacing.md,
+    paddingVertical: isTV ? spacing.md : spacing.sm,
+    borderRadius: spacing.lg,
+    marginBottom: isTV ? spacing.md : spacing.sm,
+  },
+  faceText: {
+    fontSize: isTV ? typography.fontSize.md : typography.fontSize.xs,
+    color: colors.textPrimary,
+  },
+  badgesContainer: {
+    flexDirection: 'row' as const,
+    flexWrap: 'wrap' as const,
+    gap: isTV ? spacing.lg : spacing.md,
+  },
+  noFlags: {
+    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    color: colors.textMuted,
+    fontStyle: 'italic',
   },
 });
+
+export const formStyles = StyleSheet.create({
+  infoText: {
+    fontSize: isTV ? typography.fontSize.lg : typography.fontSize.sm,
+    color: colors.textSubtle,
+    lineHeight: isTV ? 21 : 15,
+    marginBottom: spacing.sm,
+  },
+  group: {
+    marginBottom: isTV ? spacing.xxl : spacing.xl,
+  },
+  label: {
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
+  },
+  input: {
+    backgroundColor: colors.background,
+    borderRadius: spacing.lg - 4,
+    borderWidth: 1,
+    borderColor: colors.borderMuted,
+    paddingVertical: isTV ? spacing.xxl : spacing.lg,
+    paddingHorizontal: isTV ? 13 : 9,
+    color: colors.textPrimary,
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+  },
+});
+
+export const scoreStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: spacing.md,
+  },
+  value: {
+    fontSize: isTV ? typography.fontSize.xl : typography.fontSize.sm,
+    fontWeight: typography.weight.bold,
+  },
+  low: {
+    color: colors.success,
+  },
+  medium: {
+    color: colors.warning,
+  },
+  high: {
+    color: colors.danger,
+  },
+  icon: {
+    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.lg,
+  },
+});
+
+const { width: detailWidth, height: detailHeight } = Dimensions.get('window');
+
+export const mediaStyles = StyleSheet.create({
+  fullscreenImage: {
+    width: detailWidth,
+    height: detailHeight,
+  },
+  counter: {
+    position: 'absolute' as const,
+    bottom: isTV ? 40 : 20,
+    alignSelf: 'center' as const,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: isTV ? spacing.jumbo : spacing.xxxl,
+    paddingVertical: isTV ? spacing.xxl : spacing.lg,
+    borderRadius: spacing.xl,
+  },
+  counterText: {
+    color: colors.textPrimary,
+    fontSize: isTV ? typography.fontSize.xxl : typography.fontSize.xl,
+    fontWeight: typography.weight.semibold,
+  },
+});
+
+export const appStyles = {
+  layout: layoutStyles,
+  gaps: gapStyles,
+  insets: insetStyles,
+  surfaces: surfaceStyles,
+  text: textStyles,
+  buttons: buttonStyles,
+  list: listStyles,
+  badges: badgeStyles,
+  feedback: feedbackStyles,
+  sections: sectionStyles,
+  info: infoStyles,
+  forms: formStyles,
+  scores: scoreStyles,
+  media: mediaStyles,
+};
