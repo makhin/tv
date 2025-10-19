@@ -81,9 +81,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const renderItem = useCallback(
     ({ item, index }: { item: PhotoItemDisplay; index: number }) => {
       // Проверяем, должен ли этот элемент получить фокус
-      const shouldFocus = focusedItemId
-        ? String(item.id) === focusedItemId
-        : index === 0;
+      const shouldFocus = focusedItemId ? String(item.id) === focusedItemId : index === 0;
 
       return (
         <PhotoListItem
