@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Pressable, Text, Image, View } from 'react-native';
 import { format, parseISO } from 'date-fns';
 import { TagBadge } from './TagBadge';
-import { photoListItemStyles as styles } from '@/styles';
+import { appStyles } from '@/styles';
 
 interface PhotoListItemProps {
   thumbnailUrl?: string | null;
@@ -65,55 +65,62 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
 
   return (
     <Pressable
-      style={[styles.container, isFocused && styles.containerFocused]}
+      style={[appStyles.list.itemContainer, isFocused && appStyles.list.itemFocused]}
       onPress={onPress}
       onFocus={handleFocus}
       onBlur={handleBlur}
       hasTVPreferredFocus={hasTVPreferredFocus}
     >
       {/* Thumbnail */}
-      <View style={styles.thumbnailContainer}>
+      <View style={appStyles.list.thumbnailContainer}>
         {thumbnailUrl ? (
-          <Image source={{ uri: thumbnailUrl }} style={styles.thumbnail} resizeMode="cover" />
+          <Image source={{ uri: thumbnailUrl }} style={appStyles.list.thumbnail} resizeMode="cover" />
         ) : (
-          <View style={[styles.thumbnail, styles.thumbnailPlaceholder]}>
-            <Text style={styles.placeholderText}>?</Text>
+          <View style={[appStyles.list.thumbnail, appStyles.list.thumbnailPlaceholder]}>
+            <Text style={appStyles.list.placeholderText}>?</Text>
           </View>
         )}
         {/* NSFW Badge */}
         {isAdultContent && (
-          <View style={styles.nsfwBadge}>
-            <Text style={styles.nsfwText}>18+</Text>
+          <View style={appStyles.list.nsfwBadge}>
+            <Text style={appStyles.list.nsfwText}>18+</Text>
           </View>
         )}
       </View>
 
       {/* Content */}
-      <View style={styles.content}>
+      <View style={[appStyles.list.content, appStyles.list.contentGap]}>
         {/* Row 1: Storage, Name, Date, Caption */}
-        <View style={styles.row}>
-          <Text style={[styles.rowText, isFocused && styles.rowTextFocused]} numberOfLines={1}>
+        <View style={appStyles.list.row}>
+          <Text style={[appStyles.list.rowText, isFocused && appStyles.list.rowTextFocused]} numberOfLines={1}>
             📁 {storageName}
           </Text>
-          <Text style={styles.separator}>•</Text>
+          <Text style={appStyles.list.separator}>•</Text>
           <Text
-            style={[styles.rowText, styles.nameText, isFocused && styles.rowTextFocused]}
+            style={[
+              appStyles.list.rowText,
+              appStyles.list.nameText,
+              isFocused && appStyles.list.rowTextFocused,
+            ]}
             numberOfLines={1}
           >
             {name}
           </Text>
           {formattedDate && (
             <>
-              <Text style={styles.separator}>•</Text>
-              <Text style={[styles.rowText, isFocused && styles.rowTextFocused]}>
+              <Text style={appStyles.list.separator}>•</Text>
+              <Text style={[appStyles.list.rowText, isFocused && appStyles.list.rowTextFocused]}>
                 🕒 {formattedDate}
               </Text>
             </>
           )}
           {caption && (
             <>
-              <Text style={styles.separator}>•</Text>
-              <Text style={[styles.rowText, isFocused && styles.rowTextFocused]} numberOfLines={1}>
+              <Text style={appStyles.list.separator}>•</Text>
+              <Text
+                style={[appStyles.list.rowText, isFocused && appStyles.list.rowTextFocused]}
+                numberOfLines={1}
+              >
                 💬 {caption}
               </Text>
             </>
@@ -121,10 +128,10 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
         </View>
 
         {/* Row 2: Persons, Tags */}
-        <View style={styles.row}>
+        <View style={appStyles.list.row}>
           {/* Persons */}
           {personNames.length > 0 && (
-            <View style={styles.badgesContainer}>
+            <View style={appStyles.list.badgesContainer}>
               {visiblePersons.map((person, index) => (
                 <TagBadge key={`person-${index}`} label={person} variant="person" />
               ))}
@@ -134,7 +141,7 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
 
           {/* Tags */}
           {tagNames.length > 0 && (
-            <View style={styles.badgesContainer}>
+            <View style={appStyles.list.badgesContainer}>
               {visibleTags.map((tag, index) => (
                 <TagBadge key={`tag-${index}`} label={tag} variant="tag" />
               ))}

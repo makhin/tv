@@ -9,7 +9,7 @@ import { LoadMoreIndicator } from '@/components/LoadMoreIndicator';
 import { useAppStore } from '@/store/useAppStore';
 import { useInfinitePhotos } from '@/hooks/useInfinitePhotos';
 import { mapPhotosToDisplay, type PhotoItemDisplay } from '@/utils/photoHelpers';
-import { homeScreenStyles as styles } from '@/styles';
+import { appStyles } from '@/styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -85,9 +85,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const renderItem = useCallback(
     ({ item, index }: { item: PhotoItemDisplay; index: number }) => {
       // Проверяем, должен ли этот элемент получить фокус
-      const matchesSavedFocus = focusedItemId
-        ? String(item.id) === focusedItemId
-        : index === 0;
+      const matchesSavedFocus = focusedItemId ? String(item.id) === focusedItemId : index === 0;
       const shouldFocus = Platform.isTV && shouldRestoreFocus && matchesSavedFocus;
 
       return (
@@ -113,28 +111,29 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         />
       );
     },
-    [
-      navigation,
-      handleItemFocus,
-      photoIds,
-      focusedItemId,
-      setFocusedItemId,
-      shouldRestoreFocus,
-    ]
+    [navigation, handleItemFocus, photoIds, focusedItemId, setFocusedItemId, shouldRestoreFocus]
   );
 
   const ListHeaderComponent = useMemo(
     () => (
-      <View style={styles.header}>
+      <View
+        style={[
+          appStyles.layout.rowAlignCenter,
+          appStyles.insets.headerHorizontal,
+          appStyles.insets.headerVertical,
+          appStyles.gaps.lg,
+          appStyles.surfaces.brand,
+        ]}
+      >
         <FocusableButton
           title="⚙"
           onPress={() => navigation.navigate('Settings')}
-          style={styles.settingsButton}
-          textStyle={styles.settingsButtonText}
+          style={appStyles.buttons.iconSquare}
+          textStyle={appStyles.buttons.iconText}
         />
-        <View style={styles.headerContent}>
-          <Text style={styles.title}>Фотоархив</Text>
-          <Text style={styles.photoCount}>
+        <View style={[appStyles.layout.column, appStyles.gaps.md]}>
+          <Text style={appStyles.text.headingHero}>Фотоархив</Text>
+          <Text style={appStyles.text.headingMuted}>
             {isLoading && photos.length === 0
               ? 'Загрузка...'
               : `Фото: ${photos.length}${totalCount > 0 ? ` из ${totalCount}` : ''}`}
@@ -160,27 +159,48 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const ListEmptyComponent = useMemo(() => {
     if (isLoading) {
       return (
-        <View style={styles.emptyContainer}>
+        <View
+          style={[
+            appStyles.layout.centered,
+            appStyles.feedback.block,
+            appStyles.feedback.emptyState,
+            appStyles.insets.sectionPadding,
+          ]}
+        >
           <LoadMoreIndicator isVisible={true} loadedCount={0} totalCount={0} hasMore={true} />
-          <Text style={styles.loadingText}>Загрузка фото...</Text>
+          <Text style={appStyles.text.status}>Загрузка фото...</Text>
         </View>
       );
     }
 
     if (error) {
       return (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.errorText}>❌ Ошибка загрузки</Text>
-          <Text style={styles.errorDetail}>{error.message}</Text>
+        <View
+          style={[
+            appStyles.layout.centered,
+            appStyles.feedback.block,
+            appStyles.feedback.emptyState,
+            appStyles.insets.sectionPadding,
+          ]}
+        >
+          <Text style={appStyles.text.error}>❌ Ошибка загрузки</Text>
+          <Text style={appStyles.text.errorDetail}>{error.message}</Text>
           <FocusableButton title="Повторить" onPress={refresh} hasTVPreferredFocus />
         </View>
       );
     }
 
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>📅 Нет фото за этот день</Text>
-        <Text style={styles.emptySubtext}>
+      <View
+        style={[
+          appStyles.layout.centered,
+          appStyles.feedback.block,
+          appStyles.feedback.emptyState,
+          appStyles.insets.sectionPadding,
+        ]}
+      >
+        <Text style={appStyles.text.headingDisplay}>📅 Нет фото за этот день</Text>
+        <Text style={appStyles.text.headingMuted}>
           {currentDay}.{String(currentMonth).padStart(2, '0')}
         </Text>
       </View>
@@ -188,13 +208,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, [isLoading, error, refresh, currentDay, currentMonth]);
 
   return (
-    <View style={styles.container}>
+    <View style={[appStyles.layout.screen, appStyles.surfaces.brand]}>
       <FlatList
         ref={flatListRef}
         data={photos}
         renderItem={renderItem}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={appStyles.insets.listContent}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
           console.log('onEndReached triggered', {

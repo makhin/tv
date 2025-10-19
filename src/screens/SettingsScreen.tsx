@@ -8,7 +8,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { authService } from '@/services/authService';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
-import { settingsScreenStyles as styles, colors } from '@/styles';
+import { appStyles, colors } from '@/styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
@@ -87,15 +87,15 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
+    <View style={appStyles.layout.screen}>
+      <View style={appStyles.insets.screenPadding}>
         {/* Theme Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Тема</Text>
-          <Text style={styles.infoText}>
+        <View style={appStyles.sections.container}>
+          <Text style={appStyles.text.headingPrimary}>Тема</Text>
+          <Text style={appStyles.forms.infoText}>
             Текущая тема: {theme === 'dark' ? 'Тёмная' : 'Светлая'}
           </Text>
-          <View style={styles.buttonSpacing}>
+          <View style={appStyles.insets.marginTopSm}>
             <FocusableButton
               title={`Переключить на ${theme === 'dark' ? 'светлую' : 'тёмную'}`}
               onPress={handleThemeToggle}
@@ -105,13 +105,13 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         {/* Credentials Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Учетные данные</Text>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Имя пользователя</Text>
+        <View style={appStyles.sections.container}>
+          <Text style={appStyles.text.headingPrimary}>Учетные данные</Text>
+          <View style={appStyles.forms.group}>
+            <Text style={appStyles.forms.label}>Имя пользователя</Text>
             <TextInput
               focusable
-              style={styles.input}
+              style={appStyles.forms.input}
               value={username}
               onChangeText={setUsername}
               placeholder="Введите имя пользователя"
@@ -119,11 +119,11 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
               autoCapitalize="none"
             />
           </View>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Пароль</Text>
+          <View style={appStyles.forms.group}>
+            <Text style={appStyles.forms.label}>Пароль</Text>
             <TextInput
               focusable
-              style={styles.input}
+              style={appStyles.forms.input}
               value={password}
               onChangeText={setPassword}
               placeholder="Введите пароль"
@@ -131,7 +131,7 @@ const SettingsScreen: React.FC<Props> = ({ navigation }) => {
               secureTextEntry
             />
           </View>
-          <View style={styles.buttonSpacing}>
+          <View style={appStyles.insets.marginTopSm}>
             <FocusableButton
               title={isLoading ? 'Вход...' : 'Сохранить'}
               onPress={handleSaveCredentials}

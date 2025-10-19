@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
 import { useAppStore } from '@/store/useAppStore';
-import { detailScreenStyles as styles, colors } from '@/styles';
+import { appStyles, colors } from '@/styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
@@ -85,34 +85,38 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={appStyles.layout.centeredOverlay}>
         <ActivityIndicator size="large" color={colors.accentPrimary} />
-        <Text style={styles.loadingText}>Загрузка фото...</Text>
+        <Text style={appStyles.text.status}>Загрузка фото...</Text>
       </View>
     );
   }
 
   if (isError || !photo) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Ошибка загрузки фото</Text>
+      <View style={[appStyles.layout.centeredOverlay, appStyles.insets.sectionPadding]}>
+        <Text style={appStyles.text.error}>Ошибка загрузки фото</Text>
       </View>
     );
   }
 
   return (
     <Pressable
-      style={styles.container}
+      style={appStyles.layout.centeredOverlay}
       onPress={() => console.log('Screen pressed')}
       hasTVPreferredFocus={true}
     >
       {photo.previewUrl && (
-        <Image source={{ uri: photo.previewUrl }} style={styles.image} resizeMode="contain" />
+        <Image
+          source={{ uri: photo.previewUrl }}
+          style={appStyles.media.fullscreenImage}
+          resizeMode="contain"
+        />
       )}
 
       {/* Photo counter */}
-      <View style={styles.photoCounter}>
-        <Text style={styles.photoCounterText}>
+      <View style={appStyles.media.counter}>
+        <Text style={appStyles.media.counterText}>
           {currentIndex + 1} / {photoIds.length}
         </Text>
       </View>

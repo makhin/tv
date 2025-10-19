@@ -1,7 +1,7 @@
 // src/components/FocusableButton.tsx
 import React, { useState, useRef } from 'react';
 import { Pressable, Text, ViewStyle, TextStyle, Animated } from 'react-native';
-import { focusableButtonStyles as styles } from '@/styles';
+import { appStyles } from '@/styles';
 
 interface FocusableButtonProps {
   title: string;
@@ -47,9 +47,9 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
       <Pressable
         style={[
-          styles.button,
-          isFocused && styles.buttonFocused,
-          disabled && styles.buttonDisabled,
+          appStyles.buttons.base,
+          isFocused && appStyles.buttons.focused,
+          disabled && appStyles.buttons.disabled,
           style,
         ]}
         onPress={disabled ? undefined : onPress}
@@ -60,9 +60,9 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
       >
         <Text
           style={[
-            styles.text,
-            isFocused && styles.textFocused,
-            disabled && styles.textDisabled,
+            appStyles.buttons.text,
+            isFocused && appStyles.buttons.textFocused,
+            disabled && appStyles.buttons.textDisabled,
             textStyle,
           ]}
         >

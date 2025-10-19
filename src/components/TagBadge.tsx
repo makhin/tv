@@ -1,7 +1,7 @@
 // src/components/TagBadge.tsx
 import React from 'react';
 import { View, Text } from 'react-native';
-import { tagBadgeStyles as styles } from '@/styles';
+import { appStyles } from '@/styles';
 
 export type BadgeVariant = 'tag' | 'person';
 
@@ -11,12 +11,15 @@ interface TagBadgeProps {
 }
 
 export const TagBadge: React.FC<TagBadgeProps> = ({ label, variant = 'tag' }) => {
-  const badgeStyle = variant === 'person' ? styles.badgePerson : styles.badgeTag;
-  const textStyle = variant === 'person' ? styles.textPerson : styles.textTag;
+  const badgeStyle = variant === 'person' ? appStyles.badges.person : appStyles.badges.tag;
+  const textStyle =
+    variant === 'person'
+      ? [appStyles.text.badge, appStyles.text.badgePerson]
+      : [appStyles.text.badge, appStyles.text.badgeTag];
 
   return (
-    <View style={[styles.badge, badgeStyle]}>
-      <Text style={[styles.text, textStyle]}>{label}</Text>
+    <View style={[appStyles.badges.base, badgeStyle]}>
+      <Text style={textStyle}>{label}</Text>
     </View>
   );
 };
