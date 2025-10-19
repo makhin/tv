@@ -1,5 +1,5 @@
 // src/screens/HomeScreen.final.tsx (финальная версия с лучшим UX)
-import React, { useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Platform, FlatList } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
@@ -15,6 +15,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { setFocusedItemId, focusedItemId, persons, tags } = useAppStore();
   const flatListRef = useRef<FlatList>(null);
+  const [shouldRestoreFocus, setShouldRestoreFocus] = useState(true);
 
   // Получаем текущую дату для фильтра "Этот день"
   const today = new Date();
@@ -53,6 +54,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         const index = photos.findIndex((p) => String(p.id) === focusedItemId);
         if (index !== -1 && flatListRef.current) {
           console.log('Scrolling to saved photo index:', index);
+          setShouldRestoreFocus(true);
           // Небольшая задержка, чтобы список успел отрендериться
           setTimeout(() => {
             flatListRef.current?.scrollToIndex({
@@ -66,13 +68,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     });
 
     return unsubscribe;
-  }, [navigation, focusedItemId, photos]);
+  }, [navigation, focusedItemId, photos, setShouldRestoreFocus]);
 
   const handleItemFocus = useCallback(
     (itemId: number) => {
       setFocusedItemId(String(itemId));
+      setShouldRestoreFocus(false);
     },
-    [setFocusedItemId]
+    [setFocusedItemId, setShouldRestoreFocus]
   );
 
   // Получаем список ID всех фото для навигации
@@ -81,7 +84,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const renderItem = useCallback(
     ({ item, index }: { item: PhotoItemDisplay; index: number }) => {
       // Проверяем, должен ли этот элемент получить фокус
-      const shouldFocus = focusedItemId ? String(item.id) === focusedItemId : index === 0;
+      const matchesSavedFocus = focusedItemId
+        ? String(item.id) === focusedItemId
+        : index === 0;
+      const shouldFocus = Platform.isTV && shouldRestoreFocus && matchesSavedFocus;
 
       return (
         <PhotoListItem
@@ -106,7 +112,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         />
       );
     },
-    [navigation, handleItemFocus, photoIds, focusedItemId, setFocusedItemId]
+    [
+      navigation,
+      handleItemFocus,
+      photoIds,
+      focusedItemId,
+      setFocusedItemId,
+      shouldRestoreFocus,
+    ]
   );
 
   const ListHeaderComponent = useMemo(
