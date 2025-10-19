@@ -42,9 +42,7 @@ export const authService = {
         return { status: 'success', source: 'token' };
       }
 
-      const storedCredentials = normalizeCredentials(
-        selectCredentials(useAppStore.getState())
-      );
+      const storedCredentials = normalizeCredentials(selectCredentials(useAppStore.getState()));
 
       const providedCredentials = normalizeCredentials(credentials);
 
@@ -58,8 +56,7 @@ export const authService = {
         return { status: 'missing-credentials' };
       }
 
-      const rememberMe =
-        resolvedCredentials.rememberMe ?? true;
+      const rememberMe = resolvedCredentials.rememberMe ?? true;
 
       // Выполняем логин с безопасно полученными credentials
       console.log('Attempting auto-login...');

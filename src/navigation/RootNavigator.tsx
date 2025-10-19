@@ -34,11 +34,10 @@ export const RootNavigator: React.FC = () => {
   const [authError, setAuthError] = useState<string | null>(null);
   const [initialRouteName, setInitialRouteName] =
     useState<keyof RootStackParamList>('Home');
-  const { setPersons, setTags } = useAppStore((state) => ({
-    setPersons: state.setPersons,
-    setTags: state.setTags,
-  }));
-  const credentials = useAppStore(selectCredentials);
+  const setPersons = useAppStore((state) => state.setPersons);
+  const setTags = useAppStore((state) => state.setTags);
+  const username = useAppStore((state) => state.credentials.username);
+  const password = useAppStore((state) => state.credentials.password);
 
   const loadReferenceData = useCallback(async () => {
     try {
@@ -64,8 +63,8 @@ export const RootNavigator: React.FC = () => {
       setIsLoading(true);
       setAuthError(null);
 
-      const normalizedUsername = credentials?.username?.trim();
-      const normalizedPassword = credentials?.password?.trim();
+      const normalizedUsername = username?.trim();
+      const normalizedPassword = password?.trim();
       const hasStoredCredentials = Boolean(normalizedUsername && normalizedPassword);
 
       const alreadyAuthenticated = await authService.isAuthenticated();
@@ -82,7 +81,7 @@ export const RootNavigator: React.FC = () => {
       }
 
       // 1. Авторизация
-      const authResult = await authService.autoLogin(credentials);
+      const authResult = await authService.autoLogin({ username, password });
 
       if (authResult.status === 'success') {
         setInitialRouteName('Home');
@@ -105,7 +104,7 @@ export const RootNavigator: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [credentials, loadReferenceData]);
+  }, [username, password, loadReferenceData]);
 
   useEffect(() => {
     initializeApp();
