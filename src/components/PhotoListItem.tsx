@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Pressable, Text, Image, View } from 'react-native';
 import { format, parseISO } from 'date-fns';
 import { TagBadge } from './TagBadge';
-import { appStyles } from '@/styles';
+import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 interface PhotoListItemProps {
   thumbnailUrl?: string | null;
@@ -32,6 +32,7 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
   onFocus,
   hasTVPreferredFocus = false,
 }) => {
+  const { styles: appStyles } = useThemedStyles();
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = () => {

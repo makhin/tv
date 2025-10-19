@@ -8,18 +8,18 @@ import { useAppStore } from '@/store/useAppStore';
 import { authService } from '@/services/authService';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
-import { appStyles, colors } from '@/styles';
+import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
 const SettingsScreen: React.FC<Props> = ({ navigation }) => {
-  const theme = useAppStore((state) => state.theme);
   const setTheme = useAppStore((state) => state.setTheme);
   const storedUsername = useAppStore((state) => state.credentials.username);
   const storedPassword = useAppStore((state) => state.credentials.password);
   const persistCredentials = useAppStore((state) => state.setCredentials);
   const setPersons = useAppStore((state) => state.setPersons);
   const setTags = useAppStore((state) => state.setTags);
+  const { theme, styles: appStyles, colors } = useThemedStyles();
 
   const [username, setUsername] = useState(storedUsername);
   const [password, setPassword] = useState(storedPassword);

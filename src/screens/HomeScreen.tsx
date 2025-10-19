@@ -9,7 +9,7 @@ import { LoadMoreIndicator } from '@/components/LoadMoreIndicator';
 import { useAppStore } from '@/store/useAppStore';
 import { useInfinitePhotos } from '@/hooks/useInfinitePhotos';
 import { mapPhotosToDisplay, type PhotoItemDisplay } from '@/utils/photoHelpers';
-import { appStyles } from '@/styles';
+import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -17,6 +17,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { setFocusedItemId, focusedItemId, persons, tags } = useAppStore();
   const flatListRef = useRef<FlatList>(null);
   const [shouldRestoreFocus, setShouldRestoreFocus] = useState(true);
+  const { styles: appStyles } = useThemedStyles();
 
   // Получаем текущую дату для фильтра "Этот день"
   const today = new Date();
@@ -141,7 +142,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       </View>
     ),
-    [photos.length, totalCount, isLoading, navigation]
+    [appStyles, photos.length, totalCount, isLoading, navigation]
   );
 
   const ListFooterComponent = useMemo(
@@ -205,7 +206,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         </Text>
       </View>
     );
-  }, [isLoading, error, refresh, currentDay, currentMonth]);
+  }, [appStyles, currentDay, currentMonth, error, isLoading, refresh]);
 
   return (
     <View style={[appStyles.layout.screen, appStyles.surfaces.brand]}>

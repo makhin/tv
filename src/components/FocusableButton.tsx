@@ -1,7 +1,7 @@
 // src/components/FocusableButton.tsx
 import React, { useState, useRef } from 'react';
 import { Pressable, Text, ViewStyle, TextStyle, Animated } from 'react-native';
-import { appStyles } from '@/styles';
+import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 interface FocusableButtonProps {
   title: string;
@@ -20,6 +20,7 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
   style,
   textStyle,
 }) => {
+  const { styles: appStyles } = useThemedStyles();
   const [isFocused, setIsFocused] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 

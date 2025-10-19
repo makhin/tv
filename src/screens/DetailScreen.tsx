@@ -13,13 +13,14 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
 import { useAppStore } from '@/store/useAppStore';
-import { appStyles, colors } from '@/styles';
+import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 
 const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const { photoId, photoIds } = route.params;
   const { setFocusedItemId } = useAppStore();
+  const { styles: appStyles, colors } = useThemedStyles();
 
   const { data: photo, isLoading, isError } = usePhotosGetPhoto(photoId);
 

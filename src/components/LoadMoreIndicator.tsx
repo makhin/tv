@@ -1,7 +1,7 @@
 // src/components/LoadMoreIndicator.tsx
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { appStyles, colors } from '@/styles';
+import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 interface LoadMoreIndicatorProps {
   isVisible: boolean;
@@ -16,6 +16,8 @@ export const LoadMoreIndicator: React.FC<LoadMoreIndicatorProps> = ({
   totalCount,
   hasMore,
 }) => {
+  const { styles: appStyles, colors } = useThemedStyles();
+
   if (!isVisible) return null;
 
   return (

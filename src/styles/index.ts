@@ -1,6 +1,60 @@
 import { Dimensions, Platform, StyleSheet } from 'react-native';
 
-export const colors = {
+export type ColorPalette = {
+  background: string;
+  backgroundMuted: string;
+  backgroundBrand: string;
+  backgroundOverlay: string;
+  textPrimary: string;
+  textSecondary: string;
+  textMuted: string;
+  textSubtle: string;
+  accentPrimary: string;
+  accentStrong: string;
+  accentMuted: string;
+  focusBorder: string;
+  focusShadow: string;
+  focusHighlight: string;
+  borderMuted: string;
+  placeholderBackground: string;
+  placeholderText: string;
+  badgeTagBackground: string;
+  badgePersonBackground: string;
+  badgeTagText: string;
+  badgePersonText: string;
+  success: string;
+  warning: string;
+  danger: string;
+};
+
+export const lightColors: ColorPalette = {
+  background: '#ffffff',
+  backgroundMuted: '#f3f4f6',
+  backgroundBrand: '#e0f2fe',
+  backgroundOverlay: '#ffffff',
+  textPrimary: '#111827',
+  textSecondary: '#1f2937',
+  textMuted: '#4b5563',
+  textSubtle: '#6b7280',
+  accentPrimary: '#2563eb',
+  accentStrong: '#1d4ed8',
+  accentMuted: '#4b5563',
+  focusBorder: '#2563eb',
+  focusShadow: '#bfdbfe',
+  focusHighlight: '#2563eb',
+  borderMuted: '#d1d5db',
+  placeholderBackground: '#e5e7eb',
+  placeholderText: '#9ca3af',
+  badgeTagBackground: '#d1fae5',
+  badgePersonBackground: '#bfdbfe',
+  badgeTagText: '#047857',
+  badgePersonText: '#1d4ed8',
+  success: '#16a34a',
+  warning: '#d97706',
+  danger: '#dc2626',
+};
+
+export const darkColors: ColorPalette = {
   background: '#111827',
   backgroundMuted: '#1f2937',
   backgroundBrand: '#1e3a5f',
@@ -36,7 +90,7 @@ export const spacing = {
   xxl: 20,
   xxxl: 24,
   jumbo: 32,
-};
+} as const;
 
 export const typography = {
   fontSize: {
@@ -49,14 +103,14 @@ export const typography = {
     display: 24,
     hero: 28,
     mega: 36,
-  },
+  } as const,
   weight: {
     regular: '400',
     medium: '500',
     semibold: '600',
     bold: '700',
-  },
-};
+  } as const,
+} as const;
 
 const isTV = Platform.isTV;
 
@@ -81,7 +135,8 @@ const baseCentered = {
   alignItems: 'center' as const,
 };
 
-export const layoutStyles = StyleSheet.create({
+const createLayoutStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   screen: {
     ...baseFlexFill,
     backgroundColor: colors.background,
@@ -133,9 +188,10 @@ export const layoutStyles = StyleSheet.create({
   flex1: {
     ...baseFlexFill,
   },
-});
+  });
 
-export const gapStyles = StyleSheet.create({
+const createGapStyles = () =>
+  StyleSheet.create({
   sm: {
     gap: responsiveSpacing('md', 'sm'),
   },
@@ -145,9 +201,10 @@ export const gapStyles = StyleSheet.create({
   lg: {
     gap: responsiveSpacing('xxxl', 'xl'),
   },
-});
+  });
 
-export const insetStyles = StyleSheet.create({
+const createInsetStyles = () =>
+  StyleSheet.create({
   screenPadding: {
     padding: responsiveSpacing('jumbo', 'xl'),
   },
@@ -190,9 +247,10 @@ export const insetStyles = StyleSheet.create({
   marginTopSm: {
     marginTop: spacing.md,
   },
-});
+  });
 
-export const surfaceStyles = StyleSheet.create({
+const createSurfaceStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   default: {
     backgroundColor: colors.background,
   },
@@ -226,9 +284,10 @@ export const surfaceStyles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: colors.borderMuted,
   },
-});
+  });
 
-export const textStyles = StyleSheet.create({
+const createTextStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   headingHero: {
     fontSize: responsiveFontSize('mega', 'display'),
     fontWeight: typography.weight.bold,
@@ -318,9 +377,10 @@ export const textStyles = StyleSheet.create({
   center: {
     textAlign: 'center' as const,
   },
-});
+  });
 
-export const buttonStyles = StyleSheet.create({
+const createButtonStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   base: {
     backgroundColor: colors.accentPrimary,
     paddingVertical: responsiveSpacing('xxl', 'lg'),
@@ -368,9 +428,10 @@ export const buttonStyles = StyleSheet.create({
     fontSize: responsiveFontSize('mega', 'display'),
     lineHeight: responsiveValue(40, 22),
   },
-});
+  });
 
-export const listStyles = StyleSheet.create({
+const createListStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   itemContainer: {
     flexDirection: 'row' as const,
     alignItems: 'flex-start' as const,
@@ -458,9 +519,10 @@ export const listStyles = StyleSheet.create({
     flexWrap: 'wrap' as const,
     alignItems: 'center' as const,
   },
-});
+  });
 
-export const badgeStyles = StyleSheet.create({
+const createBadgeStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   base: {
     paddingHorizontal: responsiveSpacing('lg', 'md'),
     paddingVertical: responsiveSpacing('md', 'sm'),
@@ -474,9 +536,10 @@ export const badgeStyles = StyleSheet.create({
   person: {
     backgroundColor: colors.badgePersonBackground,
   },
-});
+  });
 
-export const feedbackStyles = StyleSheet.create({
+const createFeedbackStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   block: {
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
@@ -495,9 +558,10 @@ export const feedbackStyles = StyleSheet.create({
     fontSize: responsiveFontSize('hero', 'display'),
     color: colors.success,
   },
-});
+  });
 
-export const sectionStyles = StyleSheet.create({
+const createSectionStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   header: {
     flexDirection: 'row' as const,
     justifyContent: 'space-between' as const,
@@ -517,9 +581,10 @@ export const sectionStyles = StyleSheet.create({
     alignItems: 'flex-start' as const,
     marginBottom: responsiveSpacing('lg', 'md'),
   },
-});
+  });
 
-export const infoStyles = StyleSheet.create({
+const createInfoStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   label: {
     fontSize: responsiveFontSize('xl', 'sm'),
     color: colors.textMuted,
@@ -568,9 +633,10 @@ export const infoStyles = StyleSheet.create({
     color: colors.textMuted,
     fontStyle: 'italic',
   },
-});
+  });
 
-export const formStyles = StyleSheet.create({
+const createFormStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   infoText: {
     fontSize: responsiveFontSize('lg', 'sm'),
     color: colors.textSubtle,
@@ -595,9 +661,10 @@ export const formStyles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: responsiveFontSize('xl', 'sm'),
   },
-});
+  });
 
-export const scoreStyles = StyleSheet.create({
+const createScoreStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   container: {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
@@ -619,11 +686,12 @@ export const scoreStyles = StyleSheet.create({
   icon: {
     fontSize: responsiveFontSize('xxl', 'lg'),
   },
-});
+  });
 
 const { width: detailWidth, height: detailHeight } = Dimensions.get('window');
 
-export const mediaStyles = StyleSheet.create({
+const createMediaStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
   fullscreenImage: {
     width: detailWidth,
     height: detailHeight,
@@ -642,21 +710,23 @@ export const mediaStyles = StyleSheet.create({
     fontSize: responsiveFontSize('xxl', 'xl'),
     fontWeight: typography.weight.semibold,
   },
+  });
+
+export const createAppStyles = (colors: ColorPalette) => ({
+  layout: createLayoutStyles(colors),
+  gaps: createGapStyles(),
+  insets: createInsetStyles(),
+  surfaces: createSurfaceStyles(colors),
+  text: createTextStyles(colors),
+  buttons: createButtonStyles(colors),
+  list: createListStyles(colors),
+  badges: createBadgeStyles(colors),
+  feedback: createFeedbackStyles(colors),
+  sections: createSectionStyles(colors),
+  info: createInfoStyles(colors),
+  forms: createFormStyles(colors),
+  scores: createScoreStyles(colors),
+  media: createMediaStyles(colors),
 });
 
-export const appStyles = {
-  layout: layoutStyles,
-  gaps: gapStyles,
-  insets: insetStyles,
-  surfaces: surfaceStyles,
-  text: textStyles,
-  buttons: buttonStyles,
-  list: listStyles,
-  badges: badgeStyles,
-  feedback: feedbackStyles,
-  sections: sectionStyles,
-  info: infoStyles,
-  forms: formStyles,
-  scores: scoreStyles,
-  media: mediaStyles,
-};
+export type AppStyles = ReturnType<typeof createAppStyles>;
