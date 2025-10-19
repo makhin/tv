@@ -2,21 +2,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {
-  Platform,
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import { Platform, View, Text, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 
 import HomeScreen from '@/screens/HomeScreen';
 import DetailScreen from '@/screens/DetailScreen';
 import MetadataScreen from '@/screens/MetadataScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 import { authService } from '@/services/authService';
-import { useAppStore, selectCredentials } from '@/store/useAppStore';
+import { useAppStore } from '@/store/useAppStore';
 import { personsGetAll } from '@/api/generated/persons/persons';
 import { getTags } from '@/api/generated/tags/tags';
 
@@ -32,21 +25,16 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const RootNavigator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [initialRouteName, setInitialRouteName] =
-    useState<keyof RootStackParamList>('Home');
-  const { setPersons, setTags } = useAppStore((state) => ({
-    setPersons: state.setPersons,
-    setTags: state.setTags,
-  }));
-  const credentials = useAppStore(selectCredentials);
+  const [initialRouteName, setInitialRouteName] = useState<keyof RootStackParamList>('Home');
+  const setPersons = useAppStore((state) => state.setPersons);
+  const setTags = useAppStore((state) => state.setTags);
+  const username = useAppStore((state) => state.credentials.username);
+  const password = useAppStore((state) => state.credentials.password);
 
   const loadReferenceData = useCallback(async () => {
     try {
       // Загружаем persons и tags параллельно
-      const [personsData, tagsData] = await Promise.all([
-        personsGetAll(),
-        getTags(),
-      ]);
+      const [personsData, tagsData] = await Promise.all([personsGetAll(), getTags()]);
 
       console.log('Loaded persons:', personsData.length);
       console.log('Loaded tags:', tagsData.length);
@@ -64,8 +52,8 @@ export const RootNavigator: React.FC = () => {
       setIsLoading(true);
       setAuthError(null);
 
-      const normalizedUsername = credentials?.username?.trim();
-      const normalizedPassword = credentials?.password?.trim();
+      const normalizedUsername = username?.trim();
+      const normalizedPassword = password?.trim();
       const hasStoredCredentials = Boolean(normalizedUsername && normalizedPassword);
 
       const alreadyAuthenticated = await authService.isAuthenticated();
@@ -82,7 +70,7 @@ export const RootNavigator: React.FC = () => {
       }
 
       // 1. Авторизация
-      const authResult = await authService.autoLogin(credentials);
+      const authResult = await authService.autoLogin({ username, password });
 
       if (authResult.status === 'success') {
         setInitialRouteName('Home');
@@ -96,8 +84,7 @@ export const RootNavigator: React.FC = () => {
       }
 
       setInitialRouteName('Settings');
-      const message =
-        authResult.message ?? 'Не удалось авторизоваться. Проверьте учетные данные.';
+      const message = authResult.message ?? 'Не удалось авторизоваться. Проверьте учетные данные.';
       Alert.alert('Ошибка авторизации', message);
     } catch (error) {
       console.error('App initialization error:', error);
@@ -105,7 +92,7 @@ export const RootNavigator: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [credentials, loadReferenceData]);
+  }, [username, password, loadReferenceData]);
 
   useEffect(() => {
     initializeApp();
@@ -138,11 +125,7 @@ export const RootNavigator: React.FC = () => {
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Photobank' }} />
-        <Stack.Screen
-          name="Detail"
-          component={DetailScreen}
-          options={{ title: 'Photo' }}
-        />
+        <Stack.Screen name="Detail" component={DetailScreen} options={{ title: 'Photo' }} />
         <Stack.Screen
           name="Metadata"
           component={MetadataScreen}

@@ -1,6 +1,16 @@
 // src/screens/DetailScreen.tsx
 import React, { useCallback, useEffect, useRef } from 'react';
-import { View, StyleSheet, Image, Dimensions, ActivityIndicator, Text, Platform, Pressable, TVEventHandler as TVEventHandlerClass } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+  Text,
+  Platform,
+  Pressable,
+  TVEventHandler as TVEventHandlerClass,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { usePhotosGetPhoto } from '@/api/generated/photos/photos';
@@ -100,11 +110,7 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
       hasTVPreferredFocus={true}
     >
       {photo.previewUrl && (
-        <Image
-          source={{ uri: photo.previewUrl }}
-          style={styles.image}
-          resizeMode="contain"
-        />
+        <Image source={{ uri: photo.previewUrl }} style={styles.image} resizeMode="contain" />
       )}
 
       {/* Photo counter */}

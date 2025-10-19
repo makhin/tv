@@ -231,7 +231,7 @@ export const usersUpdate = (
 };
 
 export const getUsersUpdateMutationOptions = <
-  TError = ProblemDetails | ProblemDetails,
+  TError = ProblemDetails,
   TContext = unknown
 >(options?: {
   mutation?: UseMutationOptions<
@@ -268,9 +268,9 @@ export const getUsersUpdateMutationOptions = <
 
 export type UsersUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof usersUpdate>>>;
 export type UsersUpdateMutationBody = UpdateUserDto;
-export type UsersUpdateMutationError = ProblemDetails | ProblemDetails;
+export type UsersUpdateMutationError = ProblemDetails;
 
-export const useUsersUpdate = <TError = ProblemDetails | ProblemDetails, TContext = unknown>(
+export const useUsersUpdate = <TError = ProblemDetails, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof usersUpdate>>,

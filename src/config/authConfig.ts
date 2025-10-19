@@ -14,7 +14,8 @@ type Env = {
 const getProcessEnv = (): Env => {
   const globalEnv =
     (typeof globalThis !== 'undefined' &&
-      (globalThis as { process?: { env?: Env } }).process?.env) || {};
+      (globalThis as { process?: { env?: Env } }).process?.env) ||
+    {};
 
   return globalEnv;
 };

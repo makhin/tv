@@ -123,7 +123,6 @@ export interface GeoPointDto {
 
 export type IdentityStatusDto = (typeof IdentityStatusDto)[keyof typeof IdentityStatusDto];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const IdentityStatusDto = {
   Undefined: 'Undefined',
   NotDetected: 'NotDetected',

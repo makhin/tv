@@ -53,10 +53,7 @@ export const authLogin = (
   );
 };
 
-export const getAuthLoginMutationOptions = <
-  TError = ProblemDetails | ProblemDetails,
-  TContext = unknown
->(options?: {
+export const getAuthLoginMutationOptions = <TError = ProblemDetails, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authLogin>>,
     TError,
@@ -91,9 +88,9 @@ export const getAuthLoginMutationOptions = <
 
 export type AuthLoginMutationResult = NonNullable<Awaited<ReturnType<typeof authLogin>>>;
 export type AuthLoginMutationBody = LoginRequestDto;
-export type AuthLoginMutationError = ProblemDetails | ProblemDetails;
+export type AuthLoginMutationError = ProblemDetails;
 
-export const useAuthLogin = <TError = ProblemDetails | ProblemDetails, TContext = unknown>(
+export const useAuthLogin = <TError = ProblemDetails, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authLogin>>,
@@ -496,7 +493,7 @@ export const authTelegramExchange = (
 };
 
 export const getAuthTelegramExchangeMutationOptions = <
-  TError = ProblemDetails | ProblemDetails,
+  TError = ProblemDetails,
   TContext = unknown
 >(options?: {
   mutation?: UseMutationOptions<
@@ -535,12 +532,9 @@ export type AuthTelegramExchangeMutationResult = NonNullable<
   Awaited<ReturnType<typeof authTelegramExchange>>
 >;
 export type AuthTelegramExchangeMutationBody = TelegramExchangeRequest;
-export type AuthTelegramExchangeMutationError = ProblemDetails | ProblemDetails;
+export type AuthTelegramExchangeMutationError = ProblemDetails;
 
-export const useAuthTelegramExchange = <
-  TError = ProblemDetails | ProblemDetails,
-  TContext = unknown
->(
+export const useAuthTelegramExchange = <TError = ProblemDetails, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authTelegramExchange>>,

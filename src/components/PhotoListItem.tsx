@@ -127,9 +127,7 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
               {visiblePersons.map((person, index) => (
                 <TagBadge key={`person-${index}`} label={person} variant="person" />
               ))}
-              {remainingPersons > 0 && (
-                <TagBadge label={`+${remainingPersons}`} variant="person" />
-              )}
+              {remainingPersons > 0 && <TagBadge label={`+${remainingPersons}`} variant="person" />}
             </View>
           )}
 
@@ -139,9 +137,7 @@ export const PhotoListItem: React.FC<PhotoListItemProps> = ({
               {visibleTags.map((tag, index) => (
                 <TagBadge key={`tag-${index}`} label={tag} variant="tag" />
               ))}
-              {remainingTags > 0 && (
-                <TagBadge label={`+${remainingTags}`} variant="tag" />
-              )}
+              {remainingTags > 0 && <TagBadge label={`+${remainingTags}`} variant="tag" />}
             </View>
           )}
         </View>

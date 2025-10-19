@@ -113,21 +113,17 @@ export const filterPhotos = (
 
   // Фильтр по имени персоны
   if (filters.personName) {
-    filtered = filtered.filter(
-      (photo) =>
-        photo.personNames?.some((name) =>
-          name.toLowerCase().includes(filters.personName!.toLowerCase())
-        )
+    filtered = filtered.filter((photo) =>
+      photo.personNames?.some((name) =>
+        name.toLowerCase().includes(filters.personName!.toLowerCase())
+      )
     );
   }
 
   // Фильтр по тегу
   if (filters.tagName) {
-    filtered = filtered.filter(
-      (photo) =>
-        photo.tagNames?.some((tag) =>
-          tag.toLowerCase().includes(filters.tagName!.toLowerCase())
-        )
+    filtered = filtered.filter((photo) =>
+      photo.tagNames?.some((tag) => tag.toLowerCase().includes(filters.tagName!.toLowerCase()))
     );
   }
 
@@ -152,9 +148,7 @@ export const filterPhotos = (
 /**
  * Группирует фото по дате (для timeline view)
  */
-export const groupPhotosByDate = (
-  photos: PhotoItemDto[]
-): Map<string, PhotoItemDto[]> => {
+export const groupPhotosByDate = (photos: PhotoItemDto[]): Map<string, PhotoItemDto[]> => {
   const grouped = new Map<string, PhotoItemDto[]>();
 
   photos.forEach((photo) => {
@@ -167,7 +161,9 @@ export const groupPhotosByDate = (
     }
 
     const date = new Date(takenDate);
-    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+      date.getDate()
+    ).padStart(2, '0')}`;
 
     const existing = grouped.get(key) || [];
     grouped.set(key, [...existing, photo]);

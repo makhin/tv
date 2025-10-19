@@ -368,7 +368,7 @@ export const adminAccessProfilesUpdate = (
 };
 
 export const getAdminAccessProfilesUpdateMutationOptions = <
-  TError = ProblemDetails | ProblemDetails,
+  TError = ProblemDetails,
   TContext = unknown
 >(options?: {
   mutation?: UseMutationOptions<
@@ -407,12 +407,9 @@ export type AdminAccessProfilesUpdateMutationResult = NonNullable<
   Awaited<ReturnType<typeof adminAccessProfilesUpdate>>
 >;
 export type AdminAccessProfilesUpdateMutationBody = AccessProfileDto;
-export type AdminAccessProfilesUpdateMutationError = ProblemDetails | ProblemDetails;
+export type AdminAccessProfilesUpdateMutationError = ProblemDetails;
 
-export const useAdminAccessProfilesUpdate = <
-  TError = ProblemDetails | ProblemDetails,
-  TContext = unknown
->(
+export const useAdminAccessProfilesUpdate = <TError = ProblemDetails, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof adminAccessProfilesUpdate>>,
