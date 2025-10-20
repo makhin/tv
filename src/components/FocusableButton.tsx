@@ -1,6 +1,6 @@
 // src/components/FocusableButton.tsx
 import React, { useState, useRef } from 'react';
-import { Pressable, Text, ViewStyle, TextStyle, Animated } from 'react-native';
+import { Pressable, Text, ViewStyle, TextStyle, Animated, StyleProp } from 'react-native';
 import { useThemedStyles } from '@/hooks/useThemedStyles';
 
 interface FocusableButtonProps {
@@ -8,8 +8,8 @@ interface FocusableButtonProps {
   onPress: () => void;
   hasTVPreferredFocus?: boolean;
   disabled?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   accessibilityLabel?: string;
   accessibilityHint?: string;
 }
