@@ -663,6 +663,26 @@ const createFormStyles = (colors: ColorPalette) =>
   },
   });
 
+const createSearchStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: colors.backgroundMuted,
+      borderRadius: spacing.xxxl,
+      paddingHorizontal: responsiveSpacing('jumbo', 'xxl'),
+      paddingVertical: responsiveSpacing('xxl', 'lg'),
+    },
+    input: {
+      flex: 1,
+      backgroundColor: 'transparent',
+      borderWidth: 0,
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+    },
+    microphoneButton: {
+      marginLeft: responsiveSpacing('xxl', 'lg'),
+    },
+  });
+
 const createScoreStyles = (colors: ColorPalette) =>
   StyleSheet.create({
   container: {
@@ -725,6 +745,7 @@ export const createAppStyles = (colors: ColorPalette) => ({
   sections: createSectionStyles(colors),
   info: createInfoStyles(colors),
   forms: createFormStyles(colors),
+  search: createSearchStyles(colors),
   scores: createScoreStyles(colors),
   media: createMediaStyles(colors),
 });

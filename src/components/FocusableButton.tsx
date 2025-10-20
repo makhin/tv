@@ -10,6 +10,8 @@ interface FocusableButtonProps {
   disabled?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
 export const FocusableButton: React.FC<FocusableButtonProps> = ({
@@ -19,6 +21,8 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
   disabled = false,
   style,
   textStyle,
+  accessibilityLabel,
+  accessibilityHint,
 }) => {
   const { styles: appStyles } = useThemedStyles();
   const [isFocused, setIsFocused] = useState(false);
@@ -58,6 +62,8 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
         onBlur={disabled ? undefined : handleBlur}
         hasTVPreferredFocus={hasTVPreferredFocus}
         disabled={disabled}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
       >
         <Text
           style={[
