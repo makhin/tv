@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { PhotoListItem } from '@/components/PhotoListItem';
 import { FocusableButton } from '@/components/FocusableButton';
+import { VoiceSearchBar } from '@/components/VoiceSearchBar';
 import { LoadMoreIndicator } from '@/components/LoadMoreIndicator';
 import { useAppStore } from '@/store/useAppStore';
 import { useInfinitePhotos } from '@/hooks/useInfinitePhotos';
@@ -117,28 +118,25 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const ListHeaderComponent = useMemo(
     () => (
-      <View
-        style={[
-          appStyles.layout.rowAlignCenter,
-          appStyles.insets.headerHorizontal,
-          appStyles.insets.headerVertical,
-          appStyles.gaps.lg,
-          appStyles.surfaces.brand,
-        ]}
-      >
-        <FocusableButton
-          title="⚙"
-          onPress={() => navigation.navigate('Settings')}
-          style={appStyles.buttons.iconSquare}
-          textStyle={appStyles.buttons.iconText}
-        />
-        <View style={[appStyles.layout.column, appStyles.gaps.md]}>
-          <Text style={appStyles.text.headingHero}>Фотоархив</Text>
-          <Text style={appStyles.text.headingMuted}>
-            {isLoading && photos.length === 0
-              ? 'Загрузка...'
-              : `Фото: ${photos.length}${totalCount > 0 ? ` из ${totalCount}` : ''}`}
-          </Text>
+      <View style={[appStyles.insets.headerHorizontal, appStyles.insets.headerVertical, appStyles.surfaces.brand]}>
+        <View style={[appStyles.layout.column, appStyles.gaps.lg]}>
+          <VoiceSearchBar />
+          <View style={[appStyles.layout.rowAlignCenter, appStyles.gaps.lg]}>
+            <FocusableButton
+              title="⚙"
+              onPress={() => navigation.navigate('Settings')}
+              style={appStyles.buttons.iconSquare}
+              textStyle={appStyles.buttons.iconText}
+            />
+            <View style={[appStyles.layout.column, appStyles.gaps.md]}>
+              <Text style={appStyles.text.headingHero}>Фотоархив</Text>
+              <Text style={appStyles.text.headingMuted}>
+                {isLoading && photos.length === 0
+                  ? 'Загрузка...'
+                  : `Фото: ${photos.length}${totalCount > 0 ? ` из ${totalCount}` : ''}`}
+              </Text>
+            </View>
+          </View>
         </View>
       </View>
     ),
