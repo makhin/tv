@@ -118,9 +118,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const ListHeaderComponent = useMemo(
     () => (
-      <View style={[appStyles.insets.headerHorizontal, appStyles.insets.headerVertical, appStyles.surfaces.brand]}>
+      <View
+        style={[
+          appStyles.insets.headerHorizontal,
+          appStyles.insets.headerVertical,
+          appStyles.surfaces.brand,
+        ]}
+      >
         <View style={[appStyles.layout.column, appStyles.gaps.lg]}>
-          <VoiceSearchBar />
           <View style={[appStyles.layout.rowAlignCenter, appStyles.gaps.lg]}>
             <FocusableButton
               title="⚙"
@@ -137,6 +142,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               </Text>
             </View>
           </View>
+          <VoiceSearchBar />
         </View>
       </View>
     ),
