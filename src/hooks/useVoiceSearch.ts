@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  NativeModules,
   PermissionsAndroid,
   Platform,
   TextInput,
@@ -10,6 +11,8 @@ import Voice, {
   SpeechErrorEvent,
   SpeechResultsEvent,
 } from '@react-native-voice/voice';
+
+const { VoiceRecognitionModule } = NativeModules;
 
 interface UseVoiceSearchOptions {
   locale?: string;
@@ -39,7 +42,20 @@ export const useVoiceSearch = (
 
     const configureVoice = async () => {
       try {
-        const available = await Voice.isAvailable();
+        let available = false;
+
+        // For Android TV, use native module for more reliable detection
+        if (Platform.OS === 'android' && Platform.isTV && VoiceRecognitionModule) {
+          try {
+            available = await VoiceRecognitionModule.isRecognitionAvailable();
+          } catch (nativeError) {
+            // Fallback to Voice.isAvailable() if native module fails
+            available = await Voice.isAvailable();
+          }
+        } else {
+          // For non-TV platforms, use the standard Voice library check
+          available = await Voice.isAvailable();
+        }
 
         if (isMounted) {
           setIsVoiceSupported(Boolean(available));
