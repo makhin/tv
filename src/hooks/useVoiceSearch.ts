@@ -47,7 +47,6 @@ export const useVoiceSearch = (
       } catch (err) {
         if (isMounted) {
           setIsVoiceSupported(false);
-          setError('Голосовой поиск недоступен на этом устройстве.');
         }
       }
     };
@@ -129,7 +128,6 @@ export const useVoiceSearch = (
 
   const handleVoiceSearchPress = useCallback(async () => {
     if (!isVoiceSupported && !isListening) {
-      setError('Голосовой поиск недоступен на этом устройстве.');
       return;
     }
 

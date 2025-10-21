@@ -37,18 +37,19 @@ export const VoiceSearchBar: React.FC = () => {
           returnKeyType="search"
           accessibilityLabel="Строка поиска"
         />
-        <FocusableButton
-          title={isListening ? '⏹️' : '🎤'}
-          onPress={() => void handleVoiceSearchPress()}
-          disabled={!isVoiceSupported}
-          hasTVPreferredFocus={Platform.isTV}
-          style={[appStyles.buttons.iconSquare, appStyles.search.microphoneButton]}
-          textStyle={appStyles.buttons.iconText}
-          accessibilityLabel="Голосовой поиск"
-          accessibilityHint={
-            isListening ? 'Остановить запись и выполнить поиск' : 'Начать запись голосового запроса'
-          }
-        />
+        {isVoiceSupported ? (
+          <FocusableButton
+            title={isListening ? '⏹️' : '🎤'}
+            onPress={() => void handleVoiceSearchPress()}
+            hasTVPreferredFocus={Platform.isTV}
+            style={[appStyles.buttons.iconSquare, appStyles.search.microphoneButton]}
+            textStyle={appStyles.buttons.iconText}
+            accessibilityLabel="Голосовой поиск"
+            accessibilityHint={
+              isListening ? 'Остановить запись и выполнить поиск' : 'Начать запись голосового запроса'
+            }
+          />
+        ) : null}
       </View>
       {error ? (
         <Text style={[appStyles.text.bodySubtle, { color: colors.danger }]} accessibilityRole="alert">
