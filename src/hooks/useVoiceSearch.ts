@@ -11,11 +11,11 @@ import Voice, {
   SpeechResultsEvent,
 } from '@react-native-voice/voice';
 
-interface UseVoiceSearchOptions {
+export interface UseVoiceSearchOptions {
   locale?: string;
 }
 
-interface UseVoiceSearchResult {
+export interface UseVoiceSearchResult {
   query: string;
   setQuery: (value: string) => void;
   isListening: boolean;
@@ -38,6 +38,13 @@ export const useVoiceSearch = (
     let isMounted = true;
 
     const configureVoice = async () => {
+      if (Platform.isTV) {
+        if (isMounted) {
+          setIsVoiceSupported(true);
+        }
+        return;
+      }
+
       try {
         const available = await Voice.isAvailable();
 
@@ -126,8 +133,11 @@ export const useVoiceSearch = (
     }
   }, []);
 
+  const canBypassVoiceAvailabilityCheck =
+    Platform.OS === 'android' && Platform.isTV;
+
   const handleVoiceSearchPress = useCallback(async () => {
-    if (!isVoiceSupported && !isListening) {
+    if (!isListening && !isVoiceSupported && !canBypassVoiceAvailabilityCheck) {
       return;
     }
 
@@ -155,7 +165,13 @@ export const useVoiceSearch = (
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось запустить голосовой поиск.');
     }
-  }, [isVoiceSupported, isListening, requestMicrophonePermission, locale]);
+  }, [
+    isVoiceSupported,
+    isListening,
+    requestMicrophonePermission,
+    locale,
+    canBypassVoiceAvailabilityCheck,
+  ]);
 
   return {
     query,
